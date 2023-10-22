@@ -23,7 +23,7 @@ bit  [15:0] score1, case1;
 // change "top_level" if you called your device something different
 // explicitly list ports if your names differ from test bench's
 // if you used any parameters, override them here
-top_level DUT(.clk, .reset(req), .req, .done);            // replace "proc" with the name of your top level module
+top_level DUT(.clk, .reset(), .req, .done);            // replace "proc" with the name of your top level module
 
 initial begin
 
@@ -34,6 +34,7 @@ initial begin
     DUT.dm1.core[2*i+1]  = {5'b0,d1_in[i][11:9]};
     DUT.dm1.core[2*i]    =       d1_in[i][ 8:1];
   end
+
   #10ns req   = 1'b1;          // pulse request to DUT
   #10ns req   = 1'b0;
 
@@ -73,7 +74,7 @@ always begin
   #5;  // Wait for half the period before starting the clock toggling
   forever begin
     #5 clk = ~clk;  // Toggle clock every 10ns (5ns high, 5ns low)
-    $displayb(DUT.reset);
+    $displayb(DUT.dat_mem.dat_out);
   end
 
 end
