@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Runs assemble then select on the name
+# Check if the correct number of arguments are provided
+if [ "$#" -ne 1 ]; then
+    echo "Usage: ./build <filename>"
+    exit 1
+fi
+
+file=$1
+python ../assembler/assembler.py "./test_assemblies/$file.s" -o "./test_binaries/$file.o"
+
+./select "$file.o"

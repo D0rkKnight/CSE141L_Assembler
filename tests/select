@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Check if the correct number of arguments are provided
+if [ "$#" -ne 1 ]; then
+    echo "Usage: ./select <filename>"
+    exit 1
+fi
+
+# Name of the file to be copied
+filename="$1"
+
+# Source and destination directories
+src="./test_binaries/$filename"
+dest="../../ModelSim/mach_code.txt"
+
+# Check if the source file exists
+if [ ! -f "$src" ]; then
+    echo "Error: File $src does not exist!"
+    exit 2
+fi
+
+# Copy the file
+cp "$src" "$dest"
+
+# Check if the copy operation was successful
+if [ $? -eq 0 ]; then
+    echo "File copied successfully to $dest"
+else
+    echo "Error: Failed to copy the file!"
+    exit 3
+fi
