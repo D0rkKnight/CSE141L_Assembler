@@ -11,7 +11,12 @@ filename="$1"
 
 # Source and destination directories
 src="./test_binaries/$filename"
-dest="../../ModelSim/mach_code.txt"
+
+if [ -z $MODELSIM_DIR ]; then
+    echo "Error: MODELSIM_DIR environment variable not set!"
+    exit 4
+fi
+dest="$MODELSIM_DIR/mach_code.txt"
 
 # Check if the source file exists
 if [ ! -f "$src" ]; then
