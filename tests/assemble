@@ -1,0 +1,16 @@
+#!/bin/bash
+
+MODELSIM_PATH="../../ModelSim"
+
+for file in test_assemblies/*.s; do
+    filepath="$pwd/${file##*/}"
+    python ../assembler/assembler.py "$file" -o "./test_binaries/${filepath%.s}.o"
+done
+
+# Remove the test_binaries folder in $MODELSIM_PATH if it exists
+if [ -d "$MODELSIM_PATH/test_binaries" ]; then
+    rm -r $MODELSIM_PATH/test_binaries
+fi
+
+# Copy the test_binaries folder to $MODELSIM_PATH
+cp -r test_binaries $MODELSIM_PATH/

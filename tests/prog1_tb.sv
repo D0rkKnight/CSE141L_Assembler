@@ -10,7 +10,7 @@
 module prog1_tb();
 
 bit   clk    ,                   // clock source -- drives DUT input of same name
-	  req  ;	                 // req -- start program -- drives DUT input
+	    req  ;	                 // req -- start program -- drives DUT input
 wire  done;		    	         // ack -- from DUT -- done w/ program
 
 // program 1-specific variables
@@ -23,11 +23,9 @@ bit  [15:0] score1, case1;
 // change "top_level" if you called your device something different
 // explicitly list ports if your names differ from test bench's
 // if you used any parameters, override them here
-top_level DUT(.clk, .reset(start), .req(ack), .done(done));            // replace "proc" with the name of your top level module
+top_level DUT(.clk(clk), .reset(req), .req(req), .done(done));            // replace "proc" with the name of your top level module
 
 initial begin
-
-  $display("start program 1");
 
   for(int i=0;i<15;i++)	begin
     d1_in[i] = $random>>4;        // create 15 messages	   '1    '0
@@ -36,10 +34,9 @@ initial begin
     DUT.dm1.core[2*i+1]  = {5'b0,d1_in[i][11:9]};
     DUT.dm1.core[2*i]    =       d1_in[i][ 8:1];
   end
+
   #10ns req   = 1'b1;          // pulse request to DUT
   #10ns req   = 1'b0;
-
-  $display("Waiting for done now");
 
   wait(done);                   // wait for ack from DUT
 // generate parity for each message; display result and that of DUT
@@ -65,15 +62,17 @@ initial begin
     case1++;
   end
   $display("program 1 score = %d out of %d",score1,case1);
+
+  $display("Target:");
+  $displayb(DUT.dm1.core[0]);
+
   #10ns $stop;
 end
 
 always begin
-  clk = 0;
-  #5;  // Wait for half the period before starting the clock toggling
-  forever begin
-    #5 clk = ~clk;  // Toggle clock every 10ns (5ns high, 5ns low)
-  end
+  #5ns clk = 1;            // tic
+  #5ns clk = 0;			   // toc
+
 end
 							
 
