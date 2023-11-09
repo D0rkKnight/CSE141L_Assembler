@@ -8,6 +8,6 @@ if [ "$#" -ne 1 ]; then
 fi
 
 file=$1
-python ../assembler/assembler.py "./test_assemblies/$file.s" -o "./test_binaries/$file.o"
+python ../assembler/assembler.py "./test_assemblies/$file.s" "./test_binaries/$file.o"
 
 ./select "$file.o"

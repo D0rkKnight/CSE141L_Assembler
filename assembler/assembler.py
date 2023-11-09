@@ -1,81 +1,92 @@
 import sys
 
-
+# Mapping from instruction mnemonics to opcodes
 opcodes = {
-    "lw": "000",
-    "sw": "001",
-    "and": "010",
-    "imm": "011", # Load immediate
-    # "inc": "011",
-    # "dec": "100",
-    "lsl": "101",
-    "xor": "110",
-    "beq": "111",
+    "load": "0000",
+    "store": "0001",
+    "xor": "1001",
+    "branch": "0011",
+    "add": "0100",
+    "mv": "0101",
+    "lshift": "0110",
+    "rshift": "0111",
+    "loadi": "1000",
+    "parity": "1010",
 }
-
-def assemble_instruction(instruction):
-    """Convert assembly instruction to machine code."""
-    parts = instruction.split()
-    operation = parts[0]
-
-    if operation in ["lw", "sw", "and", "inc", "dec", "lsl", "xor"]:
-        rd = format(int(parts[1][1]), '03b')
-        rs = format(int(parts[2][1]), '03b')
-        return opcodes[operation] + rd + rs
-
-    if operation == "beq":
-        rd = format(int(parts[1][1]), '03b')
-        lookup_index = format(int(parts[2]), '03b')
-        
-        if len(lookup_index) > 3:
-            raise ValueError(f"Lookup index {lookup_index} is too large")
-        
-        return opcodes[operation] + rd + lookup_index
+ 
+# Expects rn to be a string of the form "r0", "r1", ..., "r7"
+def get_reg_num(register: str, bits_avail: int = 3) -> str:
     
-    if operation == "imm":
-        rd = format(int(parts[1][1]), '03b')
-        imm = format(int(parts[2]), '03b')
-        
-        if len(imm) > 3:
-            raise ValueError(f"Immediate {imm} is too large")
-        
-        return opcodes[operation] + rd + imm
+    # Get rid of the "r" in the register string
+    register = register[1:]
+    
+    # Convert the register number to binary
+    register_number = int(register)
+    register_binary = bin(register_number)[2:]
+    
+    # Pad the binary number with 0s to the left
+    register_binary = register_binary.zfill(bits_avail)
+    
+    # If the register number is too large, raise an error
+    if len(register_binary) > bits_avail:
+        raise ValueError(f"Register number {register_number} is too large")
+    
+    return register_binary
 
-    raise ValueError(f"Unknown instruction {operation}")
+def parse_imm(imm: int, bits: int) -> str:
+    imm_bin = f"{imm:0{bits}b}"
+    if imm >= 2**bits or imm < 0:
+        raise ValueError(f"Immediate value {imm} cannot be represented in {bits} bits")
+    return imm_bin
 
-def assemble_program(assembly_code):
-    """Convert a program (list of assembly instructions) to machine code."""
-    return [assemble_instruction(instruction) for instruction in assembly_code]
+def assemble(assembly_code):
+    machine_code = []
+    for line in assembly_code.split("\n"):
+        tokens = line.split()
+        if tokens:
+            instruction = tokens[0].lower()
+            operands = tokens[1:]
+
+            if instruction in {"load", "store", "add", "mv", "xor", "parity"}:
+                # R type instructions with format [4:2:3] for opcode-rs-rt
+                rs = get_reg_num(operands[0], bits_avail=2)
+                rt = get_reg_num(operands[1], bits_avail=3)
+                machine_code.append(f"{opcodes[instruction]}{rs}{rt}")
+            elif instruction in {"lshift", "rshift"}:
+                # I type instructions with format [4:2:3] for opcode-rs-i
+                rs = get_reg_num(operands[0], bits_avail=2)
+                imm = parse_imm(int(operands[1]), bits=3)
+                machine_code.append(f"{opcodes[instruction]}{rs}{imm}")
+            elif instruction == "loadi":
+                # I type instruction with a 4-bit immediate value
+                imm = parse_imm(int(operands[0]), bits=4)
+                machine_code.append(f"{opcodes[instruction]}000{imm}")
+            elif instruction == "branch":
+                # I type instruction with a 6-bit immediate value
+                imm = parse_imm(int(operands[0]), bits=6)
+                machine_code.append(f"{opcodes[instruction]}{imm}")
+    return "\n".join(machine_code)
+
+
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python assembler.py <filename> [-o output_filename]")
-        return
+    if len(sys.argv) != 3:
+        print("Usage: python assembler.py <assembly_file>")
+        sys.exit(1)
 
-    filename = sys.argv[1]
+    input_file = sys.argv[1]
+    output_file = sys.argv[2]
 
-    # Default output filename
-    output_filename = filename.split('.')[0] + ".code"
+    with open(input_file, "r") as f:
+        assembly_code = f.read()
 
-    # Check if -o tag is provided
-    if "-o" in sys.argv:
-        try:
-            output_filename = sys.argv[sys.argv.index("-o") + 1]
-        except IndexError:
-            print("Error: Output filename not provided after '-o' tag.")
-            return
+    machine_code = assemble(assembly_code)
 
-    # Read assembly instructions from the input file
-    with open(filename, "r") as infile:
-        assembly_program = infile.readlines()
-        assembly_program = [line.strip() for line in assembly_program]  # Remove newline characters
+    with open(output_file, "w") as f:
+        f.write(machine_code)
 
-    machine_code = assemble_program(assembly_program)
+    print(f"Assembly code has been successfully compiled to {output_file}")
 
-    # Write machine code to the output file
-    with open(output_filename, "w") as outfile:
-        for code in machine_code:
-            outfile.write(code + "\n")
 
 if __name__ == "__main__":
     main()
