@@ -1,42 +1,33 @@
 // combinational -- no clock
 // sample -- change as desired
 module alu(
-  input[2:0] alu_cmd,    // ALU instructions
-  input[7:0] inA, inB,	 // 8-bit wide data path
+  input[3:0] alu_cmd,    // ALU instructions
+  input[7:0] inA, inB, inC,	 // 8-bit wide data path
   input      sc_i,       // shift_carry in
   output logic[7:0] rslt,
   output logic sc_o,     // shift_carry out
                pari,     // reduction XOR (output)
-			   zero      // NOR (output)
+               branch_bool
 );
 
 always_comb begin 
   rslt = 'b0;            
   sc_o = 'b0;    
-  zero = !rslt;
   pari = ^rslt;
   case(alu_cmd)
-    3'b000: // add 2 8-bit unsigned; automatically makes carry-out
-      {sc_o,rslt} = inA + inB + sc_i;
-	3'b001: // left_shift
-	  {sc_o,rslt} = {inA, sc_i};
-      /*begin
-		rslt[7:1] = ina[6:0];
-		rslt[0]   = sc_i;
-		sc_o      = ina[7];
-      end*/
-    3'b010: // right shift (alternative syntax -- works like left shift
-	  {rslt,sc_o} = {sc_i,inA};
-    3'b011: // bitwise XOR
-	  rslt = inA ^ inB;
-	3'b100: // bitwise AND (mask)
-	  rslt = inA & inB;
-	3'b101: // left rotate
-	  rslt = {inA[6:0],inA[7]};
-	3'b110: // subtract
-	  {sc_o,rslt} = inA - inB + sc_i;
-	3'b111: // pass A
-	  rslt = inA;
+    4'b0000: rslt = inA;            //load
+    4'b0001: rslt = inA;            //store
+    4'b0010: rslt = inB ^ inA       //xor
+    4'b0011: begin                  //bne
+              rslt = (inA != inB) ? inC : 8'b0;
+              branch_bool = (inA != inB) ? 1'b1 : 1'b0;
+    end
+    4'b0100: rslt = inA + inB;
+    4'b0101: rslt = inA;            //mov
+    4'b0110: rslt = inB << inA;     //lshift
+    4'b0111: rslt = inB >> inA;     //rshift
+    4'b1000:                        //loadi
+    4'b1001:                        //pari
   endcase
 end
    

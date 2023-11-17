@@ -4,14 +4,14 @@ import sys
 opcodes = {
     "load": "0000",
     "store": "0001",
-    "xor": "1001",
-    "branch": "0011",
+    "xor": "0010",
+    "bne": "0011",
     "add": "0100",
-    "mv": "0101",
+    "mov": "0101",
     "lshift": "0110",
     "rshift": "0111",
     "loadi": "1000",
-    "parity": "1010",
+    "parity": "1001",
 }
  
 # Expects rn to be a string of the form "r0", "r1", ..., "r7"

@@ -1,5 +1,5 @@
 // control decoder
-module Control #(parameter opwidth = 3, mcodebits = 4)(
+module Control #(parameter opwidth = 3, mcodebits = 9)(
   input [mcodebits-1:0] instr,    // subset of machine code (any width you need)
   output logic RegDst, Branch, 
      MemtoReg, MemWrite, ALUSrc, RegWrite,
@@ -15,16 +15,54 @@ always_comb begin
   MemtoReg  =	'b0;   // 1: load -- route memory instead of ALU to reg_file data in
   ALUOp	    =   'b111; // y = a+0;
 // sample values only -- use what you need
-case(instr)    // override defaults with exceptions
-  'b0000:  begin					// store operation
-               MemWrite = 'b1;      // write to data mem
-               RegWrite = 'b0;      // typically don't also load reg_file
-			 end
-  'b00001:  ALUOp      = 'b000;  // add:  y = a+b
-  'b00010:  begin				  // load
-			   MemtoReg = 'b1;    // 
-             end
-// ...
+case(instr[8:5])    // override defaults with exceptions
+  4'b0000:  //load
+    begin                       
+      ALUOp = 'b110;
+      MemtoReg = 'b1;
+      RegDst = 'b1;
+    end
+  4'b0001:  //store
+    begin                       
+      ALUOp = 'b111;
+      RegWrite = 'b0;
+      MemWrite = 'b1;
+      RegDst = 'b1;
+    end
+  4'b0010:  //xor
+    begin
+      ALUOp = 'b010;
+      RegDst = 'b1;
+    end
+  4'b0011:  //bne
+    begin
+      ALUOp = 'b011;
+      Branch = 'b1;
+      RegWrite = 'b0;
+      RegDst = 'b1;
+    end 
+  4'b0100:  //add
+    begin
+      ALUOp = 'b001;
+      ALUSrc = 'b1;
+    end 
+  4'b0101:  //mov
+    begin
+      ALUOp ='b000;
+      RegDst = 'b1;
+    end
+  4'b0110:  //lshift
+    begin
+      ALUOp = 'b100;
+      ALUSrc = 'b1;
+    end
+  4'b0111:  //rshift
+    begin
+      ALUOp = 'b101;
+      ALUSrc = 'b1;
+    end
+  4'b1000:  //loadi
+  4'b1001:  //pari
 endcase
 
 end

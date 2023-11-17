@@ -2,7 +2,7 @@
 module top_level(
   input        clk, reset, req, 
   output logic done);
-  parameter D = 12,             // program counter width
+  parameter D = 10,             // program counter width
             A = 3;             		  // ALU command bit width
   wire[D-1:0] target, 			  // jump 
               prog_ctr;
