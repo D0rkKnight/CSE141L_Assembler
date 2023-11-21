@@ -1,1 +1,1 @@
-imm r0 5
+loadi r0 5

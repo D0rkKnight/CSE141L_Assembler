@@ -59,8 +59,9 @@ def assemble(assembly_code):
                 machine_code.append(f"{opcodes[instruction]}{rs}{imm}")
             elif instruction == "loadi":
                 # I type instruction with a 4-bit immediate value
-                imm = parse_imm(int(operands[0]), bits=4)
-                machine_code.append(f"{opcodes[instruction]}000{imm}")
+                rs = get_reg_num(operands[0], bits_avail=2)
+                imm = parse_imm(int(operands[1]), bits=3)
+                machine_code.append(f"{opcodes[instruction]}{rs}{imm}")
             elif instruction == "branch":
                 # I type instruction with a 6-bit immediate value
                 imm = parse_imm(int(operands[0]), bits=6)
