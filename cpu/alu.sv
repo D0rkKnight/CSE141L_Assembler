@@ -1,7 +1,7 @@
 // combinational -- no clock
 // sample -- change as desired
-module alu(
-  input[3:0] alu_cmd,    // ALU instructions
+module alu #(parameter A = 3)(
+  input[A-1:0] alu_cmd,    // ALU instructions
   input[7:0] inA, inB,	 // 8-bit wide data path
   input      sc_i,       // shift_carry in
   output logic[7:0] rslt,
@@ -15,19 +15,17 @@ always_comb begin
   sc_o = 'b0;    
   pari = ^rslt;
   case(alu_cmd)
-    4'b0000: rslt = inA;            //load
-    4'b0001: rslt = inA;            //store
-    4'b0010: rslt = inB ^ inA       //xor
-    4'b0011: begin                  //bne
+    3'b001: rslt = inB ^ inA;       //xor
+    3'b010: begin                  //bne
               rslt = (inA != inB) ? 1'b1 : 1'b0;
               branch_bool = (inA != inB) ? 1'b1 : 1'b0;
     end
-    4'b0100: rslt = inA + inB;
-    4'b0110: rslt = inB << inA;     //lshift
-    4'b0111: rslt = inB >> inA;     //rshift
-    4'b1000:                        //loadi
-    4'b1001:                        //pari
-    4'b1111: rslt = inA;            //nop
+    3'b011: rslt = inA + inB;     // add
+    3'b100: rslt = inB << inA;     //lshift
+    3'b101: rslt = inB >> inA;     //rshift
+    // 3'b1001:                        //pari
+    3'b110: rslt = inB;           // select 2nd
+    3'b111: rslt = inA;            //nop
   endcase
 end
    

@@ -43,18 +43,19 @@ module top_level(
                .mach_code);
 
 // control decoder
-  Control ctl1(.instr(),
-  .RegDst  (), 
-  .Branch  (absj)  , 
-  .MemWrite , 
-  .ALUSrc   , 
-  .RegWrite   ,     
-  .MemtoReg(),
-  .ALUOp());
+  Control #(.opwidth(A))
+    ctl1(.instr(),
+    .RegDst  (), 
+    .Branch  (absj)  , 
+    .MemWrite , 
+    .ALUSrc   , 
+    .RegWrite   ,     
+    .MemtoReg(),
+    .ALUOp(alu_cmd));
 
   assign rd_addrA = mach_code[2:0];
   assign rd_addrB = mach_code[4:3];
-  assign alu_cmd  = mach_code[8:5];
+  assign immed = {{5{mach_code[2]}}, mach_code[2:0]}; // Sign extended immediate value
 
   reg_file #(.pw(3)) rf1(.dat_in(regfile_dat),	   // loads, most ops
               .clk         ,
@@ -67,7 +68,8 @@ module top_level(
 
   assign muxB = ALUSrc? immed : datB;
 
-  alu alu1(.alu_cmd(),
+  alu #(.A(A)) 
+    alu1(.alu_cmd(),
             .inA    (datA),
             .inB    (muxB),
             .sc_i   (sc),   // output from sc register
