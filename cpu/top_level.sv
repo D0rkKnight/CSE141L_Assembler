@@ -20,7 +20,8 @@ module top_level(
         sc_clr,
         sc_en,
         MemWrite,
-        ALUSrc;		              // immediate switch
+        ALUSrc,		              // immediate switch
+        MemtoReg;                // load switch
   wire[A-1:0] alu_cmd;
   wire[8:0]   mach_code;          // machine code
   wire[2:0] rd_addrA, rd_adrB;    // address pointers to reg_file
@@ -28,18 +29,19 @@ module top_level(
   PC #(.D(D)) 					  // D sets program counter width
      pc1 (.reset            ,
           .clk              ,
-          .reljump_en (relj),
+          // .reljump_en (relj),
           .absjump_en (absj),
           .target           ,
           .prog_ctr          );
 
 // lookup table to facilitate jumps/branches
   PC_LUT #(.D(D))
-    pl1 (.addr  (how_high),
+    pl1 (.addr  (immed),
          .target          );   
 
 // contains machine code
-  instr_ROM ir1(.prog_ctr,
+  instr_ROM #(.D(D))
+    ir1(.prog_ctr,
                .mach_code);
 
 // control decoder
@@ -50,7 +52,7 @@ module top_level(
     .MemWrite , 
     .ALUSrc   , 
     .RegWrite   ,     
-    .MemtoReg(),
+    .MemtoReg,
     .ALUOp(alu_cmd));
 
   assign rd_addrA = mach_code[2:0];
@@ -67,6 +69,7 @@ module top_level(
               .datB_out(datB)); 
 
   assign muxB = ALUSrc? immed : datB;
+  assign regfile_dat = MemtoReg? dat_mem.dat_out() : rslt;
 
   alu #(.A(A)) 
     alu1(.alu_cmd(),
