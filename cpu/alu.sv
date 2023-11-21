@@ -23,11 +23,11 @@ always_comb begin
               branch_bool = (inA != inB) ? 1'b1 : 1'b0;
     end
     4'b0100: rslt = inA + inB;
-    4'b0101: rslt = inA;            //mov
     4'b0110: rslt = inB << inA;     //lshift
     4'b0111: rslt = inB >> inA;     //rshift
     4'b1000:                        //loadi
     4'b1001:                        //pari
+    4'b1111: rslt = inA;            //nop
   endcase
 end
    
