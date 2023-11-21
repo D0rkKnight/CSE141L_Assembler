@@ -3,7 +3,8 @@ module top_level(
   input        clk, reset, req, 
   output logic done);
   parameter D = 10,             // program counter width
-            A = 3;             		  // ALU command bit width
+            A = 3,             		  // ALU command bit width
+            REG_BITS = 3;
   wire[D-1:0] target, 			  // jump 
               prog_ctr;
   wire        RegWrite;
@@ -24,7 +25,10 @@ module top_level(
         MemtoReg;                // load switch
   wire[A-1:0] alu_cmd;
   wire[8:0]   mach_code;          // machine code
-  wire[2:0] rd_addrA, rd_adrB;    // address pointers to reg_file
+  wire[2:0] rd_addrA, rd_addrB;    // address pointers to reg_file
+
+  wire[7:0] mem_out;          // Memory output
+  wire[7:0] regfile_dat;      // data to reg_file
 // fetch subassembly
   PC #(.D(D)) 					  // D sets program counter width
      pc1 (.reset            ,
@@ -59,7 +63,7 @@ module top_level(
   assign rd_addrB = mach_code[4:3];
   assign immed = {{5{mach_code[2]}}, mach_code[2:0]}; // Sign extended immediate value
 
-  reg_file #(.pw(3)) rf1(.dat_in(regfile_dat),	   // loads, most ops
+  reg_file #(.pw(REG_BITS)) rf1(.dat_in(regfile_dat),	   // loads, most ops
               .clk         ,
               .wr_en   (RegWrite),
               .rd_addrA(rd_addrA),
@@ -69,7 +73,8 @@ module top_level(
               .datB_out(datB)); 
 
   assign muxB = ALUSrc? immed : datB;
-  assign regfile_dat = MemtoReg? dat_mem.dat_out() : rslt;
+  assign regfile_dat = MemtoReg? mem_out : rslt;
+  assign branch_taken = (rslt == 1'b1) && (absj == 1'b1);
 
   alu #(.A(A)) 
     alu1(.alu_cmd(),
@@ -84,7 +89,7 @@ module top_level(
              .clk           ,
 			        .wr_en  (MemWrite), // stores
 			        .addr   (datA),
-              .dat_out());
+              .dat_out(mem_out));
 
 // registered flags from ALU
   always_ff @(posedge clk) begin
