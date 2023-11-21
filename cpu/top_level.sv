@@ -50,7 +50,7 @@ module top_level(
 
 // control decoder
   Control #(.opwidth(A))
-    ctl1(.instr(),
+    ctl1(.instr(mach_code),
     .RegDst  (), 
     .Branch  (absj)  , 
     .MemWrite , 
@@ -77,7 +77,7 @@ module top_level(
   assign branch_taken = (rslt == 1'b1) && (absj == 1'b1);
 
   alu #(.A(A)) 
-    alu1(.alu_cmd(),
+    alu1(.alu_cmd,
             .inA    (datA),
             .inB    (muxB),
             .sc_i   (sc),   // output from sc register

@@ -14,9 +14,9 @@ initial begin
 
   wait(done);           // wait for ack from DUT
 
-  $display("Testing imm r0 5 instruction");
-  if (DUT.rf1.core[0] == 5'b00101) begin
-      $display("Test Passed: r0 contains the value 5");
+  $display("Testing imm r0 3 instruction");
+  if (DUT.rf1.core[0] == 5'b00011) begin
+      $display("Test Passed: r0 contains the value 3");
   end
   else begin
       $display("Test Failed: r0 contains %d", DUT.rf1.core[0]);
