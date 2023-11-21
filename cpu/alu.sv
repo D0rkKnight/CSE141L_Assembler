@@ -2,7 +2,7 @@
 // sample -- change as desired
 module alu(
   input[3:0] alu_cmd,    // ALU instructions
-  input[7:0] inA, inB, inC,	 // 8-bit wide data path
+  input[7:0] inA, inB,	 // 8-bit wide data path
   input      sc_i,       // shift_carry in
   output logic[7:0] rslt,
   output logic sc_o,     // shift_carry out
@@ -19,7 +19,7 @@ always_comb begin
     4'b0001: rslt = inA;            //store
     4'b0010: rslt = inB ^ inA       //xor
     4'b0011: begin                  //bne
-              rslt = (inA != inB) ? inC : 8'b0;
+              rslt = (inA != inB) ? 1'b1 : 1'b0;
               branch_bool = (inA != inB) ? 1'b1 : 1'b0;
     end
     4'b0100: rslt = inA + inB;
