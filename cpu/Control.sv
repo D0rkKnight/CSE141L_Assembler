@@ -2,8 +2,8 @@
 module Control #(parameter opwidth = 3, mcodebits = 9)(
   input [mcodebits-1:0] instr,    // subset of machine code (any width you need)
   output logic RegDst, Branch, 
-     MemtoReg, MemWrite, ALUSrc, RegWrite,
-  output logic[opwidth-1:0] ALUOp);	   // for up to 8 ALU operations
+     MemtoReg, MemWrite, ALUSrc, RegWrite, Halt,
+  output logic[opwidth:0] ALUOp);	   // for up to 8 ALU operations
 
 always_comb begin
 // defaults
@@ -13,7 +13,7 @@ always_comb begin
   ALUSrc 	=	'b0;   // 1: immediate  0: second reg file output
   RegWrite  =	'b1;   // 0: for store or no op  1: most other operations 
   MemtoReg  =	'b0;   // 1: load -- route memory instead of ALU to reg_file data in
-  ALUOp	    =   'b111; // y = a+0; nop
+  ALUOp	    =   'b0111; // y = a+0; nop
 // sample values only -- use what you need
 case(instr[8:5])    // override defaults with exceptions
   4'b0000:  //load
@@ -27,37 +27,45 @@ case(instr[8:5])    // override defaults with exceptions
     end
   4'b0010:  //xor
     begin
-      ALUOp = 'b001;
+      ALUOp = 'b0001;
     end
   4'b0011:  //bne
     begin
-      ALUOp = 'b010;
+      ALUOp = 'b0010;
       Branch = 'b1;
       RegWrite = 'b0;
     end 
   4'b0100:  //add
     begin
-      ALUOp = 'b011;
+      ALUOp = 'b0011;
     end 
   4'b0101:  //mov
     begin
     end
   4'b0110:  //lshift
     begin
-      ALUOp = 'b100;
+      ALUOp = 'b0100;
       ALUSrc = 'b1;
     end
   4'b0111:  //rshift
     begin
-      ALUOp = 'b101;
+      ALUOp = 'b0101;
       ALUSrc = 'b1;
     end
   4'b1000:  //loadi
     begin
-      ALUOp = 'b110;
+      ALUOp = 'b0110;
       ALUSrc = 'b1;
     end
-  // 4'b1001:  //pari
+  4'b1001:  //pari
+    begin
+      ALUOp = 'b1000;
+      ALUSrc = 'b1;
+    end
+  4'b1010: // halt
+    begin
+      Halt = 'b1;
+    end
 endcase
 
 end

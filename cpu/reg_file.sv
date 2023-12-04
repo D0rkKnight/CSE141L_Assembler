@@ -10,7 +10,7 @@ module reg_file #(parameter pw=4)(
   output logic[7:0] datA_out, // read data
                     datB_out);
 
-  logic[7:0] core[2**pw];    // 2-dim array  8 wide  16 deep
+  logic[7:0] core[2**pw] = '{default:0};    // 2-dim array  8 wide  16 deep
 
 // reads are combinational
   assign datA_out = core[rd_addrA];

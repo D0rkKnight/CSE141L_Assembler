@@ -7,11 +7,12 @@ opcodes = {
     "xor": "0010",
     "bne": "0011",
     "add": "0100",
-    "mov": "0101",
+    "mv": "0101",
     "lshift": "0110",
     "rshift": "0111",
     "loadi": "1000",
     "parity": "1001",
+    "halt": "1010"
 }
  
 # Expects rn to be a string of the form "r0", "r1", ..., "r7"
@@ -46,6 +47,9 @@ def assemble(assembly_code):
         if tokens:
             instruction = tokens[0].lower()
             operands = tokens[1:]
+            
+            if instruction == '#':
+                continue
 
             if instruction in {"load", "store", "add", "mv", "xor", "parity"}:
                 # R type instructions with format [4:2:3] for opcode-rs-rt
@@ -62,10 +66,16 @@ def assemble(assembly_code):
                 rs = get_reg_num(operands[0], bits_avail=2)
                 imm = parse_imm(int(operands[1]), bits=3)
                 machine_code.append(f"{opcodes[instruction]}{rs}{imm}")
-            elif instruction == "branch":
+            elif instruction in {"bne", "halt"}:
                 # I type instruction with a 6-bit immediate value
-                imm = parse_imm(int(operands[0]), bits=6)
+                imm = parse_imm(int(operands[0]), bits=5)
                 machine_code.append(f"{opcodes[instruction]}{imm}")
+    
+    # Check if the last instruction is a halt instruction
+    if machine_code[-1][0:4] != "1010":
+        print("Warning: Last instruction is not a halt instruction. Adding halt instruction to the end of the program")
+        machine_code.append(opcodes["halt"] + "00000")    
+    
     return "\n".join(machine_code)
 
 
@@ -91,3 +101,43 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+### Documentation
+'''
+R-type Instructions: These instructions operate on register values. The format is [4-bit opcode][2-bit source register rs][3-bit target register rt].
+I-type Instructions: These instructions include immediate values. The format is [4-bit opcode][2-bit register rs][3-bit immediate value i] or [4-bit opcode][5-bit immediate value i].
+
+Opcode Mapping
+Each mnemonic maps to a 4-bit opcode. Here's the mapping given in the assembler code:
+
+load - 0000
+store - 0001
+xor - 0010
+bne - 0011
+add - 0100
+mov - 0101
+lshift - 0110
+rshift - 0111
+loadi - 1000
+parity - 1001
+halt - 1010
+Instructions Details
+Load and Store
+
+load rs, rt - Load the value from the address in rs to rt.
+store rs, rt - Store the value from rt into the address in rs.
+Arithmetic and Logical Operations
+
+add rs, rt - Add values in rs and rt, store result in rt.
+xor rs, rt - Perform bitwise XOR on rs and rt, store result in rt.
+lshift rs, i - Left shift the value in rs by i bits.
+rshift rs, i - Right shift the value in rs by i bits.
+parity rs, rt - Check parity of the value in rs and store result in rt.
+Immediate Operations
+
+loadi rs, i - Load immediate value i into rs.
+Branch and Control
+
+bne i - Branch if not equal to immediate value i.
+halt - Stop execution.
+'''

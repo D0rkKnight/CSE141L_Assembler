@@ -22,8 +22,9 @@ module top_level(
         sc_en,
         MemWrite,
         ALUSrc,		              // immediate switch
-        MemtoReg;                // load switch
-  wire[A-1:0] alu_cmd;
+        MemtoReg,                // load switch
+        Halt;                   // halt switch
+  wire[A:0] alu_cmd;
   wire[8:0]   mach_code;          // machine code
   wire[2:0] rd_addrA, rd_addrB;    // address pointers to reg_file
 
@@ -57,7 +58,8 @@ module top_level(
     .ALUSrc   , 
     .RegWrite   ,     
     .MemtoReg,
-    .ALUOp(alu_cmd));
+    .ALUOp(alu_cmd),
+    .Halt);
 
   assign rd_addrA = mach_code[2:0];
   assign rd_addrB = mach_code[4:3];
@@ -102,7 +104,7 @@ module top_level(
       sc_in <= sc_o;
   end
 
-  assign done = prog_ctr == 128;
+  assign done = Halt;
 
   // assign done = 1'b1;
  
