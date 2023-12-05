@@ -66,7 +66,8 @@ module top_level(
 
   assign rd_addrA = mach_code[2:0];
   assign rd_addrB = mach_code[4:3];
-  assign immed = {{5{mach_code[2]}}, mach_code[2:0]}; // Sign extended immediate value (Right 3 bits)
+  // assign immed = {{5{mach_code[2]}}, mach_code[2:0]}; // Sign extended immediate value (Right 3 bits)
+  assign immed = mach_code[2:0]; // Don't sign extend immediate value (Right 3 bits)
 
   reg_file #(.pw(REG_BITS)) rf1(.dat_in(regfile_dat),	   // loads, most ops
               .clk         ,

@@ -1,6 +1,8 @@
 # Test Load and Store
+loadi r0 3  # Load immediate value 0 into r0
+store r0 r1 # Store value in r0 into address in r1
 load r0 r1  # Load value at address in r0 into r1
-store r1 r2 # Store value in r1 into address in r2
+# store r1 r2 # Store value in r1 into address in r2
 
 # Test Arithmetic and Logical Operations
 loadi r2 5  # Load immediate value 5 into r3

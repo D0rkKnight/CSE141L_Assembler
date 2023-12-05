@@ -67,11 +67,11 @@ def assemble(assembly_code):
     # Build branch target block
     branch_target_block = []
     for label, target in branch_table:
-        branch_target_block.append(f"{target:010b}")
+        branch_target_block.append(f"{target:09b}")
         
     # Pad until 8 entries
     while len(branch_target_block) < 8:
-        branch_target_block.append("0"*10)
+        branch_target_block.append("0"*9)
     
     for line in assembly_code.split("\n"):
         tokens = line.split()
