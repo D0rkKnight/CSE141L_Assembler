@@ -26,7 +26,8 @@ module top_level(
         Halt;                   // halt switch
   wire[A:0] alu_cmd;
   wire[8:0]   mach_code;          // machine code
-  wire[2:0] rd_addrA, rd_addrB;    // address pointers to reg_file
+  wire[2:0] rd_addrA, rd_addrB, dst_reg;    // address pointers to reg_file
+  wire[1:0] RegDst;
 
   wire[7:0] mem_out;          // Memory output
   wire[7:0] regfile_dat;      // data to reg_file
@@ -55,14 +56,14 @@ module top_level(
 // control decoder
   Control #(.opwidth(A))
     ctl1(.instr(mach_code),
-    .RegDst  (), 
     .Branch  (absj)  , 
     .MemWrite , 
     .ALUSrc   , 
     .RegWrite   ,     
     .MemtoReg,
     .ALUOp(alu_cmd),
-    .Halt);
+    .Halt,
+    .RegDst);
 
   assign rd_addrA = mach_code[2:0];
   assign rd_addrB = mach_code[4:3];
@@ -74,13 +75,16 @@ module top_level(
               .wr_en   (RegWrite),
               .rd_addrA(rd_addrA),
               .rd_addrB(rd_addrB),
-              .wr_addr (rd_addrB),      // in place operation
+              .wr_addr (dst_reg),      // in place operation
               .datA_out(datA),
               .datB_out(datB)); 
 
   assign muxB = ALUSrc? immed : datB;
   assign regfile_dat = MemtoReg? mem_out : rslt;
   assign branch_taken = (rslt == 1'b1) && (absj == 1'b1);
+  assign dst_reg = (RegDst == 2'b00) ? 3'b0 :
+                    (RegDst == 2'b01) ? rd_addrB :
+                    (RegDst == 2'b10) ? rd_addrA : 3'bx;
 
   alu #(.A(A)) 
     alu1(.alu_cmd,

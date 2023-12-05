@@ -14,17 +14,18 @@ always_comb begin
   sc_o = 'b0;    
   pari = ^rslt;
   case(alu_cmd)
-    3'b0001: rslt = inB ^ inA;       //xor
-    3'b0010: begin                  //bne
+    4'b0001: rslt = inB ^ inA;       //xor
+    4'b0010: begin                  //bne
               rslt = inA != 0 ? 1'b1 : 1'b0;
     end
-    3'b0011: rslt = inA + inB;     // add
-    3'b0100: rslt = inB << inA;     //lshift
-    3'b0101: rslt = inB >> inA;     //rshift
-    // 3'b1001:                        //pari
-    3'b0110: rslt = inB;           // select 2nd
-    3'b0111: rslt = inA;            //nop
-    3'b1000: rslt = ^inB;           //pari
+    4'b0011: rslt = inA + inB;     // add
+    4'b0100: rslt = inB << inA;     //lshift
+    4'b0101: rslt = inB >> inA;     //rshift
+    // 4'b1001:                        //pari
+    4'b0110: rslt = inB;           // select 2nd
+    4'b0111: rslt = inA;            //nop_a
+    4'b1000: rslt = ^inB;           //pari
+    4'b1001: rslt = inB;            //nop_b
   endcase
 end
    
