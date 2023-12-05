@@ -42,6 +42,10 @@ def parse_imm(imm: int, bits: int) -> str:
 
 def assemble(assembly_code):
     machine_code = []
+    branch_table = []
+    prog_ctr = 0
+    
+    # Populate branch table
     for line in assembly_code.split("\n"):
         tokens = line.split()
         if tokens:
@@ -50,6 +54,37 @@ def assemble(assembly_code):
             
             if instruction == '#':
                 continue
+            
+            prog_ctr += 1
+            
+            # Is a branch instruction
+            if instruction[-1] == ':':
+                branch_table.append((instruction[:-1], prog_ctr))
+    
+    # Build branch target block
+    branch_target_block = []
+    for label, target in branch_table:
+        branch_target_block.append(f"{target:010b}")
+        
+    # Pad until 8 entries
+    while len(branch_target_block) < 8:
+        branch_target_block.append("0"*10)
+    
+    for line in assembly_code.split("\n"):
+        tokens = line.split()
+        if tokens:
+            instruction = tokens[0].lower()
+            operands = tokens[1:]
+            
+            if instruction == '#':
+                continue
+            
+            # Is a branch instruction
+            if instruction[-1] == ':':
+                continue
+            
+            if instruction not in opcodes:
+                raise ValueError(f"Invalid instruction {instruction}")
 
             if instruction in {"load", "store", "add", "mv", "xor", "parity"}:
                 # R type instructions with format [4:2:3] for opcode-rs-rt
@@ -66,17 +101,36 @@ def assemble(assembly_code):
                 rs = get_reg_num(operands[0], bits_avail=2)
                 imm = parse_imm(int(operands[1]), bits=3)
                 machine_code.append(f"{opcodes[instruction]}{rs}{imm}")
-            elif instruction in {"bne", "halt"}:
+            elif instruction in {"bne"}:
                 # I type instruction with a 6-bit immediate value
-                imm = parse_imm(int(operands[0]), bits=5)
-                machine_code.append(f"{opcodes[instruction]}{imm}")
+                rs = get_reg_num(operands[0], bits_avail=2)
+                
+                branch_target = operands[1]
+                branch_target_exists = False
+                branch_target_index = None
+                i = 0
+                for label, target in branch_table:
+                    if label == branch_target:
+                        branch_target_exists = True
+                        branch_target_index = i
+                        break
+                    i += 1
+                if not branch_target_exists:
+                    raise ValueError(f"Branch target {branch_target} does not exist")
+                
+                print(f"rs: {rs}")
+                print(f"Branch target {branch_target} found at index {branch_target_index}")
+                
+                machine_code.append(f"{opcodes[instruction]}{rs}{branch_target_index:03b}")
+            elif instruction == "halt":
+                machine_code.append(f"{opcodes[instruction]}00000")
     
     # Check if the last instruction is a halt instruction
     if machine_code[-1][0:4] != "1010":
         print("Warning: Last instruction is not a halt instruction. Adding halt instruction to the end of the program")
         machine_code.append(opcodes["halt"] + "00000")    
-    
-    return "\n".join(machine_code)
+        
+    return "\n".join(branch_target_block + machine_code)
 
 
 

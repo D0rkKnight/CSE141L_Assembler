@@ -1,13 +1,12 @@
-module PC_LUT #(parameter D=12)(
-  input       [ 7:0] addr,	   // target 4 values
-  output logic[D-1:0] target);
+module PC_LUT #(parameter D = 12) (
+    input       [2:0] addr,        // Address to select one of the 8 values
+    input       [D-1:0] branch_table [7:0], // Array of 8 D-bit inputs
+    output logic [D-1:0] target
+);
 
-  always_comb case(addr)
-    0: target = -5;   // go back 5 spaces
-	1: target = 20;   // go ahead 20 spaces
-	2: target = '1;   // go back 1 space   1111_1111_1111
-	default: target = 'b0;  // hold PC  
-  endcase
+    always_comb begin
+        target = branch_table[addr]; // Index into branch_table using addr
+    end
 
 endmodule
 

@@ -30,6 +30,7 @@ module top_level(
 
   wire[7:0] mem_out;          // Memory output
   wire[7:0] regfile_dat;      // data to reg_file
+  wire[D-1:0] branch_table [8];   // branch target address
 // fetch subassembly
   PC #(.D(D)) 					  // D sets program counter width
      pc1 (.reset            ,
@@ -42,12 +43,14 @@ module top_level(
 // lookup table to facilitate jumps/branches
   PC_LUT #(.D(D))
     pl1 (.addr  (immed),
-         .target          );   
+         .target,          
+         .branch_table);   
 
 // contains machine code
   instr_ROM #(.D(D))
     ir1(.prog_ctr,
-               .mach_code);
+        .mach_code,
+        .branch_table);
 
 // control decoder
   Control #(.opwidth(A))
@@ -63,7 +66,7 @@ module top_level(
 
   assign rd_addrA = mach_code[2:0];
   assign rd_addrB = mach_code[4:3];
-  assign immed = {{5{mach_code[2]}}, mach_code[2:0]}; // Sign extended immediate value
+  assign immed = {{5{mach_code[2]}}, mach_code[2:0]}; // Sign extended immediate value (Right 3 bits)
 
   reg_file #(.pw(REG_BITS)) rf1(.dat_in(regfile_dat),	   // loads, most ops
               .clk         ,

@@ -1,15 +1,28 @@
 // lookup table
 // deep 
 // 9 bits wide; as deep as you wish
-module instr_ROM #(parameter D=12)(
-  input       [D-1:0] prog_ctr,    // prog_ctr	  address pointer
-  output logic[ 8:0] mach_code);
+module instr_ROM #(parameter D = 12, parameter B = 8) (
+    input        [D-1:0] prog_ctr,    // Program counter address pointer
+    output logic [8:0] mach_code,     // Machine code output
+    output logic [D-1:0] branch_table[B] // Branch table output
+);
 
-  logic[8:0] core[2**D];
-  initial							    // load the program
-    $readmemb("mach_code.txt",core);
+    localparam TOTAL_SIZE = 2**D + B; // Total size including branch table and core
+    logic [8:0] memory[TOTAL_SIZE];   // Combined memory for branch table and core
 
-  always_comb  mach_code = core[prog_ctr];
+    // Load the program and branch table
+    initial $readmemb("mach_code.txt", memory);
+
+    // Assign machine code based on program counter
+    always_comb mach_code = memory[prog_ctr + B]; // Offset by B to account for branch table
+
+    // Assign branch table values
+    generate
+        genvar i;
+        for (i = 0; i < B; i++) begin : assign_branch_table
+            always_comb branch_table[i] = memory[i];
+        end
+    endgenerate
 
 endmodule
 

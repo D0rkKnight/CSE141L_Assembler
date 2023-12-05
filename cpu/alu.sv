@@ -16,7 +16,7 @@ always_comb begin
   case(alu_cmd)
     3'b0001: rslt = inB ^ inA;       //xor
     3'b0010: begin                  //bne
-              rslt = (inA != inB) ? 1'b1 : 1'b0;
+              rslt = inA != 0 ? 1'b1 : 1'b0;
     end
     3'b0011: rslt = inA + inB;     // add
     3'b0100: rslt = inB << inA;     //lshift
