@@ -61,6 +61,9 @@ def assemble(assembly_code):
             if instruction[-1] == ':':
                 branch_table.append((instruction[:-1], prog_ctr))
     
+    if len(branch_table) > 8:
+        raise ValueError(f"Too many branch targets. Maximum number of branch targets is 8")
+    
     # Build branch target block
     branch_target_block = []
     for label, target in branch_table:
