@@ -288,7 +288,10 @@ Loop:
     mv r0 r6           //r6 = loop counter + 1
 
     //branch to halt
-    bne r6 Loop
+    sub r0 7
+    sub r0 7
+    sub r0 1           //check if loop counter = 0
+    bne r0 Loop
 
 Halt:
     halt
