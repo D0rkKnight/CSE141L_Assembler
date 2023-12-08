@@ -287,7 +287,7 @@ Loop:
     add r1 r6          //r0 = loop counter + 1
     mv r0 r6           //r6 = loop counter + 1
 
-    //branch to halt
+    //branch to Loop
     sub r0 7
     sub r0 7
     sub r0 1           //check if loop counter = 0
