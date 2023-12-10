@@ -18,10 +18,13 @@ opcodes = {
 }
  
 # Expects rn to be a string of the form "r0", "r1", ..., "r7"
-def get_reg_num(register: str, bits_avail: int = 3) -> str:
+def get_reg_num(register: str, bits_avail: int = 3, instr: str = "sample_instr") -> str:
     
     # Get rid of the "r" in the register string
     register = register[1:]
+    
+    if (register == ""):
+        raise ValueError(f"Register number cannot be empty (instr {instr})")
     
     # Convert the register number to binary
     register_number = int(register)
@@ -93,35 +96,37 @@ def assemble(assembly_code):
 
             if instruction in {"load", "store", "add", "mv", "xor", "parity", "or", "sub"}:
                 # R type instructions with format [4:2:3] for opcode-rs-rt
-                rs = get_reg_num(operands[0], bits_avail=2)
-                rt = get_reg_num(operands[1], bits_avail=3)
+                rs = get_reg_num(operands[0], bits_avail=2, instr=instruction)
+                rt = get_reg_num(operands[1], bits_avail=3, instr=instruction)
                 machine_code.append(f"{opcodes[instruction]}{rs}{rt}")
             elif instruction in {"lshift", "rshift"}:
                 # I type instructions with format [4:2:3] for opcode-rs-i
-                rs = get_reg_num(operands[0], bits_avail=2)
+                rs = get_reg_num(operands[0], bits_avail=2, instr=instruction)
                 imm = parse_imm(int(operands[1]), bits=3)
                 machine_code.append(f"{opcodes[instruction]}{rs}{imm}")
             elif instruction == "loadi":
                 # I type instruction with a 4-bit immediate value
-                rs = get_reg_num(operands[0], bits_avail=2)
+                rs = get_reg_num(operands[0], bits_avail=2, instr=instruction)
                 imm = parse_imm(int(operands[1]), bits=3)
                 machine_code.append(f"{opcodes[instruction]}{rs}{imm}")
             elif instruction in {"bne"}:
                 # I type instruction with a 6-bit immediate value
-                rs = get_reg_num(operands[0], bits_avail=2)
+                rs = get_reg_num(operands[0], bits_avail=2, instr=instruction)
                 
                 branch_target = operands[1]
                 branch_target_exists = False
                 branch_target_index = None
                 i = 0
                 for label, target in branch_table:
-                    if label == branch_target:
+                    if label == branch_target.lower():
                         branch_target_exists = True
                         branch_target_index = i
                         break
                     i += 1
                 if not branch_target_exists:
                     raise ValueError(f"Branch target {branch_target} does not exist")
+                
+                
                 
                 print(f"rs: {rs}")
                 print(f"Branch target {branch_target} found at index {branch_target_index}")
