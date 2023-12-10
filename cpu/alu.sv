@@ -15,8 +15,8 @@ always_comb begin
   pari = ^rslt;
   case(alu_cmd)
     4'b0001: rslt = inB ^ inA;       //xor
-    4'b0010: begin                  //bne
-              rslt = inA != 0 ? 1'b1 : 1'b0;
+    4'b0010: begin                  //bnez
+              rslt = inB != 0 ? 1'b1 : 1'b0;
     end
     4'b0011: rslt = inA + inB;     // add
     4'b0100: rslt = inB << inA;     //lshift
@@ -24,10 +24,10 @@ always_comb begin
     // 4'b1001:                        //pari
     4'b0110: rslt = inB;           // select 2nd
     4'b0111: rslt = inA;            //nop_a
-    4'b1000: rslt = ^inB;           //pari
+    4'b1000: rslt = ^inA;           //pari
     4'b1001: rslt = inB;            //nop_b
     4'b1010: rslt = inA | inB;      //or
-    4'b1011: rslt = inA - inB;      //sub
+    4'b1011: rslt = inB - inA;      //sub
   endcase
 end
    

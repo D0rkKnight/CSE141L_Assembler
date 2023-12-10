@@ -37,7 +37,7 @@ module top_level(
      pc1 (.reset            ,
           .clk              ,
           // .reljump_en (relj),
-          .absjump_en (absj),
+          .absjump_en (branch_taken),
           .target           ,
           .prog_ctr          );
 

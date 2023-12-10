@@ -20,7 +20,8 @@ module instr_ROM #(parameter D = 12, parameter B = 8) (
     generate
         genvar i;
         for (i = 0; i < B; i++) begin : assign_branch_table
-            always_comb branch_table[i] = memory[i];
+            always_comb branch_table[B-i-1] = memory[i];
+            // always_comb branch_table[B-i] = i;
         end
     endgenerate
 

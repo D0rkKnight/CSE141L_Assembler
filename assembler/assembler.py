@@ -60,11 +60,11 @@ def assemble(assembly_code):
             if instruction == '#':
                 continue
             
-            prog_ctr += 1
-            
             # Is a branch instruction
             if instruction[-1] == ':':
                 branch_table.append((instruction[:-1], prog_ctr))
+                
+            prog_ctr += 1
     
     if len(branch_table) > 8:
         raise ValueError(f"Too many branch targets. Maximum number of branch targets is 8")
