@@ -12,7 +12,9 @@ opcodes = {
     "rshift": "0111",
     "loadi": "1000",
     "parity": "1001",
-    "halt": "1010"
+    "halt": "1010",
+    "or": "1011",
+    "sub": "1100",
 }
  
 # Expects rn to be a string of the form "r0", "r1", ..., "r7"
@@ -89,7 +91,7 @@ def assemble(assembly_code):
             if instruction not in opcodes:
                 raise ValueError(f"Invalid instruction {instruction}")
 
-            if instruction in {"load", "store", "add", "mv", "xor", "parity"}:
+            if instruction in {"load", "store", "add", "mv", "xor", "parity", "or", "sub"}:
                 # R type instructions with format [4:2:3] for opcode-rs-rt
                 rs = get_reg_num(operands[0], bits_avail=2)
                 rt = get_reg_num(operands[1], bits_avail=3)

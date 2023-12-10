@@ -73,6 +73,14 @@ case(instr[8:5])    // override defaults with exceptions
     begin
       Halt = 'b1;
     end
+  4'b1011:  // or
+    begin
+      ALUOp = 'b1010;
+    end
+  4'b1100:  // sub
+    begin
+      ALUOp = 'b1011;
+    end
 endcase
 
 end
