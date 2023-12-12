@@ -4,6 +4,7 @@ module top_level(
   output logic done);
   parameter D = 10,             // program counter width
             A = 3,             		  // ALU command bit width
+            B = 5,            		  // branch table depth
             REG_BITS = 3;
   wire[D-1:0] target, 			  // jump 
               prog_ctr;
@@ -31,7 +32,8 @@ module top_level(
 
   wire[7:0] mem_out;          // Memory output
   wire[7:0] regfile_dat;      // data to reg_file
-  wire[D-1:0] branch_table [8];   // branch target address
+  wire[D-1:0] branch_table [2**B];   // branch target address
+  wire[B-1:0] branch_tag;       // branch tag
 // fetch subassembly
   PC #(.D(D)) 					  // D sets program counter width
      pc1 (.reset            ,
@@ -42,13 +44,13 @@ module top_level(
           .prog_ctr          );
 
 // lookup table to facilitate jumps/branches
-  PC_LUT #(.D(D))
-    pl1 (.addr  (immed),
+  PC_LUT #(.D(D), .B(B))
+    pl1 (.addr  (branch_tag),
          .target,          
          .branch_table);   
 
 // contains machine code
-  instr_ROM #(.D(D))
+  instr_ROM #(.D(D), .B(B))
     ir1(.prog_ctr,
         .mach_code,
         .branch_table);
@@ -67,6 +69,7 @@ module top_level(
 
   assign rd_addrA = mach_code[2:0];
   assign rd_addrB = mach_code[4:3];
+  assign branch_tag = mach_code[4:0];
   // assign immed = {{5{mach_code[2]}}, mach_code[2:0]}; // Sign extended immediate value (Right 3 bits)
   assign immed = mach_code[2:0]; // Don't sign extend immediate value (Right 3 bits)
 

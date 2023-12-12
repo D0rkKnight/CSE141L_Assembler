@@ -294,7 +294,7 @@ Loop:
 
     loadi r1 1
     sub r0 r1           # check if loop counter = 0
-    bne r0 Loop
+    bne Loop
 
 Halt:
     halt

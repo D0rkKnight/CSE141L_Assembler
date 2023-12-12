@@ -1,6 +1,6 @@
-module PC_LUT #(parameter D = 12) (
-    input       [2:0] addr,        // Address to select one of the 8 values
-    input       [D-1:0] branch_table [7:0], // Array of 8 D-bit inputs
+module PC_LUT #(parameter D = 12, B = 5) (
+    input       [B-1:0] addr,        // Address to select one of the 2**B values
+    input       [D-1:0] branch_table [(2**B)-1:0], // Array of 2**B D-bit inputs
     output logic [D-1:0] target
 );
 

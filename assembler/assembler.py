@@ -16,6 +16,9 @@ opcodes = {
     "or": "1011",
     "sub": "1100",
 }
+
+BRANCH_TARGET_BITS = 5
+
  
 # Expects rn to be a string of the form "r0", "r1", ..., "r7"
 def get_reg_num(register: str, bits_avail: int = 3, instr: str = "sample_instr") -> str:
@@ -66,8 +69,8 @@ def assemble(assembly_code):
                 
             prog_ctr += 1
     
-    if len(branch_table) > 8:
-        raise ValueError(f"Too many branch targets. Maximum number of branch targets is 8")
+    if len(branch_table) > 2 ** BRANCH_TARGET_BITS:
+        raise ValueError(f"Too many branch targets. Maximum number of branch targets is {2 ** BRANCH_TARGET_BITS}")
     
     # Build branch target block
     branch_target_block = []
@@ -75,7 +78,7 @@ def assemble(assembly_code):
         branch_target_block.append(f"{target:09b}")
         
     # Pad until 8 entries
-    while len(branch_target_block) < 8:
+    while len(branch_target_block) < 2 ** BRANCH_TARGET_BITS:
         branch_target_block.append("0"*9)
     
     for line in assembly_code.split("\n"):
@@ -111,9 +114,9 @@ def assemble(assembly_code):
                 machine_code.append(f"{opcodes[instruction]}{rs}{imm}")
             elif instruction in {"bne"}:
                 # I type instruction with a 6-bit immediate value
-                rs = get_reg_num(operands[0], bits_avail=2, instr=instruction)
+                rs = 0
                 
-                branch_target = operands[1]
+                branch_target = operands[0]
                 branch_target_exists = False
                 branch_target_index = None
                 i = 0
@@ -131,7 +134,7 @@ def assemble(assembly_code):
                 print(f"rs: {rs}")
                 print(f"Branch target {branch_target} found at index {branch_target_index}")
                 
-                machine_code.append(f"{opcodes[instruction]}{rs}{branch_target_index:03b}")
+                machine_code.append(f"{opcodes[instruction]}{branch_target_index:05b}")
             elif instruction == "halt":
                 machine_code.append(f"{opcodes[instruction]}00000")
     
