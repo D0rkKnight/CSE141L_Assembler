@@ -22,10 +22,10 @@ always_comb begin
     4'b0100: rslt = inB << inA;     //lshift
     4'b0101: rslt = inB >> inA;     //rshift
     // 4'b1001:                        //pari
-    4'b0110: rslt = inB;           // select 2nd
+    4'b0110: rslt = inB;            //nop_b
     4'b0111: rslt = inA;            //nop_a
     4'b1000: rslt = ^inA;           //pari
-    4'b1001: rslt = inB;            //nop_b
+    // 4'b1001: rslt = inB;            //nop_b
     4'b1010: rslt = inA | inB;      //or
     4'b1011: rslt = inB - inA;      //sub
   endcase

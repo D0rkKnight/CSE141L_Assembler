@@ -16,12 +16,12 @@ Loop:
     # calculate p8 = ^(b11:b5)
     loadi r1 1         # r1 = 1
     add r1 r7          # r0 = 1 + index counter
-    load r0 r2         # r2 = mem[1 + index counter] = 00000_b11:b9
+    load r2 r0         # r2 = mem[1 + index counter] = 00000_b11:b9
     lshift r2 5        # r2 = b11:b9_00000
     
     loadi r0 0         # r0 = 0
     add r0 r7          # r0 = index counter
-    load r0 r3         # r3 = mem[index counter] = b8:b1
+    load r3 r0         # r3 = mem[index counter] = b8:b1
     rshift r3 4        # r3 = 0000_b8:b5
     lshift r3 1        # r3 = 000_b8:b5_0
     
@@ -46,12 +46,12 @@ Loop:
     # calculate p4 = ^(b11:b8,b4,b3,b2)
     loadi r1 1         # r1 = 1
     add r1 r7          # r0 = 1 + index counter
-    load r0 r2         # r2 = 00000_b11:b9
+    load r2 r0         # r2 = 00000_b11:b9
     lshift r2 5        # r2 = b11:b9_00000
     
     loadi r0 0         # r0 = 0
     add r0 r7          # r0 = index counter
-    load r0 r3         # r3 = b8:b1
+    load r3 r0         # r3 = b8:b1
     lshift r3 7        # r3 = 0000000_b8
     rshift r3 4        # r3 = 000_b8_0000
     
@@ -60,7 +60,7 @@ Loop:
 
     loadi r0 0
     add r0 r7          # r0 = index counter
-    load r0 r3         # r3 = b8:b1
+    load r3 r0         # r3 = b8:b1
     lshift r3 4        # r3 = b4:b1_0000
     rshift r3 5        # r3 = 00000_b4:b2
     lshift r3 1        # r3 = 0000_b4:b2_0
@@ -79,13 +79,13 @@ Loop:
         
     loadi r1 1         # r1 = 1
     add r1 r7          # r0 = 1 + index counter
-    load r0 r2         # r2 = mem[1 + index counter] = 00000_b11:b9
+    load r2 r0         # r2 = mem[1 + index counter] = 00000_b11:b9
     rshift r2 1        # r2 = 000000_b11:b10
     lshift r2 6        # r2 = b11:b10_000000
     
     loadi r0 0         # r0 = 0
     add r0 r7          # r0 = index counter
-    load r0 r3         # r3 = mem[index counter] = b8:b1
+    load r3 r0         # r3 = mem[index counter] = b8:b1
     lshift r3 1        # r3 = b7:b1_0
     rshift r3 6        # r3 = 000000_b7:b6
     lshift r3 4        # r3 = 00_b7:b6_0000
@@ -95,7 +95,7 @@ Loop:
 
     loadi r0 0         # r0 = 0
     add r0 r7          # r0 = index counter
-    load r0 r3         # r3 = mem[index counter] = b8:b1
+    load r3 r0         # r3 = mem[index counter] = b8:b1
     lshift r3 4        # r3 = b4:b1_0000
     rshift r3 6        # r3 = 000000_b4:b3
     lshift r3 2        # r3 = 0000_b4:b3_00
@@ -105,7 +105,7 @@ Loop:
 
     loadi r0 0         # r0 = 0
     add r0 r7          # r0 = index counter
-    load r0 r3         # r3 = mem[index counter] = b8:b1
+    load r3 r0         # r3 = mem[index counter] = b8:b1
     lshift r3 7        # r3 = b1_0000000
     rshift r3 6        # r3 = 000000_b1_0
     
@@ -122,11 +122,11 @@ Loop:
     # calculate p1 = ^(b11,b9,b7,b5,b4,b2,b1)
     loadi r1 1         # r1 = 1
     add r1 r7          # r0 = 1 + index counter
-    load r0 r2         # r2 = mem[1 + index counter] = 00000_b11:b9
+    load r2 r0         # r2 = mem[1 + index counter] = 00000_b11:b9
     rshift r2 2        # r2 = 0000000_b11
     lshift r2 7        # r2 = b11_0000000
 
-    load r0 r3         # r3 = 00000_b11:b9
+    load r3 r0         # r3 = 00000_b11:b9
     lshift r3 7        # r3 = b9_0000000
     rshift r3 1        # r3 = 0_b9_000000
     
@@ -135,7 +135,7 @@ Loop:
 
     loadi r0 0         # r0 = 0
     add r0 r7          # r0 = index counter
-    load r0 r3         # r3 = b8:b1
+    load r3 r0         # r3 = b8:b1
     lshift r3 1        # r3 = b7:b1_0
     rshift r3 7        # r3 = 0000000_b7
     lshift r3 5        # r3 = 00_b7_00000
@@ -145,7 +145,7 @@ Loop:
 
     loadi r0 0         # r0 = 0
     add r0 r7          # r0 = index counter
-    load r0 r3         # r3 = b8:b1
+    load r3 r0         # r3 = b8:b1
     lshift r3 3        # r3 = b5:b1_000
     rshift r3 6        # r3 = 000000_b5:b4
     lshift r3 3        # r3 = 000_b5:b4_000
@@ -155,7 +155,7 @@ Loop:
 
     loadi r0 0         # r0 = 0
     add r0 r7          # r0 = index counter
-    load r0 r3         # r3 = b8:b1
+    load r3 r0         # r3 = b8:b1
     lshift r3 6        # r3 = b2:b1_000000
     rshift r3 5        # r3 = 00000_b2:b1_0
     
@@ -172,19 +172,19 @@ Loop:
     # calculate p0 = ^(b11:1,p8,p4,p2,p1) 
     loadi r1 1         # r1 = 1
     add r1 r7          # r0 = 1 + index counter
-    load r0 r2         # r2 = mem[1 + index counter] = 00000_b11:b9
+    load r2 r0         # r2 = mem[1 + index counter] = 00000_b11:b9
     parity r2 r1       # r1 = ^(b11:b9)
     
     loadi r0 0         # r0 = 0
     add r0 r7          # r0 = index counter
-    load r0 r3         # r3 = mem[index counter] = b8:b1    
+    load r3 r0         # r3 = mem[index counter] = b8:b1    
     parity r3 r0       # r0 = ^(b8:b1)
 
     xor r0 r1          # r0 = ^(b11:b1)
 
     loadi r2 1
     lshift r2 6        # r2 = 64
-    load r2 r1         # r1 = mem[64] = p8
+    load r1 r2         # r1 = mem[64] = p8
     xor r0 r1          # r0 = ^(b11:b1,p8)
     mv r0 r4           # r4 = ^(b11:b1,p8)
 
@@ -192,7 +192,7 @@ Loop:
     lshift r2 6        # r2 = 64
     loadi r3 1
     add r2 r3          # r0 = 65
-    load r0 r1         # r1 = mem[65] = p4
+    load r1 r0         # r1 = mem[65] = p4
     xor r0 r4          # r0 = ^(b11:1,p8,p4)
     mv r0 r4           # r4 = ^(b11:1,p8,p4)
 
@@ -200,7 +200,7 @@ Loop:
     lshift r2 6        # r2 = 64
     loadi r3 2
     add r2 r3          # r0 = 66
-    load r0 r1         # r1 = mem[66] = p2
+    load r1 r0         # r1 = mem[66] = p2
     xor r0 r4          # r0 = ^(b11:1,p8,p4,p2)
     mv r0 r4           # r4 = ^(b11:1,p8,p4,p2)
 
@@ -208,7 +208,7 @@ Loop:
     lshift r2 6        # r2 = 64
     loadi r3 3
     add r2 r3          # r0 = 67
-    load r0 r1         # r1 = mem[67] = p1
+    load r1 r0         # r1 = mem[67] = p1
     xor r0 r4          # r0 = ^(b11:1,p8,p4,p2,p1)
     mv r0 r1           # r1 = p0
 
@@ -222,7 +222,7 @@ Loop:
     # get output LSW
     loadi r0 0         # r0 = 0
     add r0 r7          # r0 = index counter
-    load r0 r3         # r3 = mem[index counter] = b8:b1
+    load r3 r0         # r3 = mem[index counter] = b8:b1
     rshift r3 1        # r3 = 0_b8:b2
     lshift r3 5        # r3 = b4:b2_00000
 
@@ -230,14 +230,14 @@ Loop:
     lshift r1 6        # r1 = 64
     loadi r0 1         # r0 = 1
     add r0 r1          # r0 = 65
-    load r0 r1         # r1 = mem[65] = p4
+    load r1 r0         # r1 = mem[65] = p4
     lshift r1 4        # r1 = 000_p4_0000
     or r3 r1           # r0 = b4:b2,p4_0000
     mv r0 r2           # r2 = b4:b2,p4_0000
 
     loadi r0 0         # r0 = 0
     add r0 r7          # r0 = index counter
-    load r0 r3         # r3 = mem[index counter] = b8:b1
+    load r3 r0         # r3 = mem[index counter] = b8:b1
     lshift r3 7        # r3 = b1_0000000
     rshift r3 4        # r3 = 0000_b1_000
     or r2 r3           # r0 = b4:b2,p4,b1_000
@@ -247,7 +247,7 @@ Loop:
     lshift r1 6        # r1 = 64
     loadi r0 2         # r0 = 2
     add r0 r1          # r0 = 66
-    load r0 r1         # r1 = mem[66] = p2
+    load r1 r0         # r1 = mem[66] = p2
     lshift r1 2        # r1 = 00000_p2_00
     or r2 r1           # r0 = b4:b2,p4,b1,p2_00
     mv r0 r2           # r2 = b4:b2,p4,b1,p2_00
@@ -256,7 +256,7 @@ Loop:
     lshift r1 6        # r1 = 64
     loadi r0 3         # r0 = 3
     add r0 r1          # r0 = 67
-    load r0 r1         # r1 = mem[67] = p1
+    load r1 r0         # r1 = mem[67] = p1
     lshift r1 1        # r1 = 000000_p1_0
     or r2 r1           # r0 = b4:b2,p4,b1,p2,p1_0
     mv r0 r2           # r2 = b4:b2,p4,b1,p2,p1_0
@@ -265,7 +265,7 @@ Loop:
     lshift r1 6        # r1 = 64
     loadi r0 4         # r0 = 4
     add r0 r1          # r0 = 68
-    load r0 r1         # r1 = mem[68] = p0
+    load r1 r0         # r1 = mem[68] = p0
     or r2 r1           # r0 = b4:b2,p4,b1,p2,p1,p0
     mv r0 r2           # r2 = output LSW
 

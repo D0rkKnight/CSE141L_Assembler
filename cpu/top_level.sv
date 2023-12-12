@@ -9,7 +9,7 @@ module top_level(
               prog_ctr;
   wire        RegWrite;
   wire[7:0]   datA,datB,		  // from RegFile
-              muxB, 
+              muxA, 
               rslt,               // alu output
               immed;
   logic sc_in,   				  // shift/carry out from/to ALU
@@ -79,7 +79,7 @@ module top_level(
               .datA_out(datA),
               .datB_out(datB)); 
 
-  assign muxB = ALUSrc? immed : datB;
+  assign muxA = ALUSrc? immed : datA;
   assign regfile_dat = MemtoReg? mem_out : rslt;
   assign branch_taken = (rslt == 1'b1) && (absj == 1'b1);
   assign dst_reg = (RegDst == 2'b00) ? 3'b0 :
@@ -88,8 +88,8 @@ module top_level(
 
   alu #(.A(A)) 
     alu1(.alu_cmd,
-            .inA    (datA),
-            .inB    (muxB),
+            .inA    (muxA),
+            .inB    (datB),
             .sc_i   (sc),   // output from sc register
             .rslt       ,
             .sc_o   (sc_o), // input to sc register

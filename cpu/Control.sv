@@ -44,7 +44,8 @@ case(instr[8:5])    // override defaults with exceptions
   4'b0101:  //mv
     begin
       RegDst = 2;
-      ALUOp = 'b1001; //Passthrough b
+      // ALUOp = 'b0110; //Passthrough b
+      ALUOp = 'b0111; // Passthrough a
     end
   4'b0110:  //lshift
     begin
@@ -60,7 +61,8 @@ case(instr[8:5])    // override defaults with exceptions
     end
   4'b1000:  //loadi
     begin
-      ALUOp = 'b0110;
+      // ALUOp = 'b0110;
+      ALUOp = 'b0111; // Passthrough a
       ALUSrc = 'b1;
       RegDst = 1;
     end
