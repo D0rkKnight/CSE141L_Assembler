@@ -171,40 +171,43 @@ if __name__ == "__main__":
 
 ### Documentation
 '''
-R-type Instructions: These instructions operate on register values. The format is [4-bit opcode][2-bit source register rs][3-bit target register rt].
-I-type Instructions: These instructions include immediate values. The format is [4-bit opcode][2-bit register rs][3-bit immediate value i] or [4-bit opcode][5-bit immediate value i].
+Instruction Format
+R-type Instructions:
 
-Opcode Mapping
-Each mnemonic maps to a 4-bit opcode. Here's the mapping given in the assembler code:
+Format: opcode (4 bits) | rs (2 bits) | rt (3 bits)
+Supported Operations: load, store, add, mv, xor, parity, or, sub
 
-load - 0000
-store - 0001
-xor - 0010
-bne - 0011
-add - 0100
-mov - 0101
-lshift - 0110
-rshift - 0111
-loadi - 1000
-parity - 1001
-halt - 1010
-Instructions Details
-Load and Store
+I-type Instructions:
 
-load rs, rt - Load the value from the address in rs to rt.
-store rs, rt - Store the value from rt into the address in rs.
-Arithmetic and Logical Operations
+Format: opcode (4 bits) | rs (2 bits) | immediate (3 bits)
+Supported Operations: lshift, rshift, loadi
 
-add rs, rt - Add values in rs and rt, store result in rt.
-xor rs, rt - Perform bitwise XOR on rs and rt, store result in rt.
-lshift rs, i - Left shift the value in rs by i bits.
-rshift rs, i - Right shift the value in rs by i bits.
-parity rs, rt - Check parity of the value in rs and store result in rt.
-Immediate Operations
+Branch Instructions:
 
-loadi rs, i - Load immediate value i into rs.
-Branch and Control
+Format: opcode (4 bits) | branch target index (5 bits)
+Supported Operations: bne
 
-bne i - Branch if not equal to immediate value i.
-halt - Stop execution.
+Special Instructions:
+
+halt: opcode (4 bits) | unused (5 bits)
+Description: Stops the execution of the program.
+
+Opcode Encoding
+load: 0000
+store: 0001
+xor: 0010
+bne: 0011
+add: 0100
+mv: 0101
+lshift: 0110
+rshift: 0111
+loadi: 1000
+parity: 1001
+halt: 1010
+or: 1011
+sub: 1100
+
+Notes:
+There are a maximum of 32 branch targets
+R type instructions write to r0, except for parity and mv, which write to rt
 '''
