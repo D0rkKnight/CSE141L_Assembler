@@ -52,8 +52,8 @@ Loop:
     loadi r0 0         # r0 = 0
     add r0 r7          # r0 = index counter
     load r3 r0         # r3 = b8:b1
-    lshift r3 7        # r3 = 0000000_b8
-    rshift r3 4        # r3 = 000_b8_0000
+    rshift r3 7        # r3 = 0000000_b8
+    lshift r3 4        # r3 = 000_b8_0000
     
     or r2 r3           # r0 = b11:b8_0000
     mv r0 r4           # r4 = r0 = b11:b8_0000
@@ -193,7 +193,7 @@ Loop:
     loadi r3 1
     add r2 r3          # r0 = 65
     load r1 r0         # r1 = mem[65] = p4
-    xor r0 r4          # r0 = ^(b11:1,p8,p4)
+    xor r1 r4          # r0 = ^(b11:1,p8,p4) //changed r0 to r1
     mv r0 r4           # r4 = ^(b11:1,p8,p4)
 
     loadi r2 1
@@ -201,7 +201,7 @@ Loop:
     loadi r3 2
     add r2 r3          # r0 = 66
     load r1 r0         # r1 = mem[66] = p2
-    xor r0 r4          # r0 = ^(b11:1,p8,p4,p2)
+    xor r1 r4          # r0 = ^(b11:1,p8,p4,p2) //changed r0 to r1
     mv r0 r4           # r4 = ^(b11:1,p8,p4,p2)
 
     loadi r2 1
@@ -209,7 +209,7 @@ Loop:
     loadi r3 3
     add r2 r3          # r0 = 67
     load r1 r0         # r1 = mem[67] = p1
-    xor r0 r4          # r0 = ^(b11:1,p8,p4,p2,p1)
+    xor r1 r4          # r0 = ^(b11:1,p8,p4,p2,p1) //changed r0 to r1
     mv r0 r1           # r1 = p0
 
     # store p0 in mem[68]
@@ -266,7 +266,7 @@ Loop:
     loadi r0 4         # r0 = 4
     add r0 r1          # r0 = 68
     load r1 r0         # r1 = mem[68] = p0
-    or r2 r1           # r0 = b4:b2,p4,b1,p2,p1,p0
+    or r2 r1           # r0 = b4:b2,p4,b1,p2,p1,p0 #this is wrong, r1 should be 0 but now 01000000
     mv r0 r2           # r2 = output LSW
 
     # store output LSW in mem[30]
@@ -289,8 +289,8 @@ Loop:
 
     # branch to Loop
     loadi r1 7
-    sub r0 r1
-    sub r0 r1
+    sub r0 r1          # r0 = loop counter - 7
+    sub r0 r1          # r0 = loop counter - 7
 
     loadi r1 1
     sub r0 r1           # check if loop counter = 0
