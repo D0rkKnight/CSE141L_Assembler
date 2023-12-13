@@ -82,6 +82,12 @@ case(instr[8:5])    // override defaults with exceptions
     begin
       ALUOp = 'b1011;
     end
+  4'b1101:  // lsr
+    begin
+      ALUOp = 'b0100;
+      // ALUSrc = 'b1; lsr uses register
+      RegDst = 1;
+    end
 endcase
 
 end

@@ -15,6 +15,7 @@ opcodes = {
     "halt": "1010",
     "or": "1011",
     "sub": "1100",
+    "lsr": "1101",
 }
 
 BRANCH_TARGET_BITS = 5
@@ -97,7 +98,7 @@ def assemble(assembly_code):
             if instruction not in opcodes:
                 raise ValueError(f"Invalid instruction {instruction}")
 
-            if instruction in {"load", "store", "add", "mv", "xor", "parity", "or", "sub"}:
+            if instruction in {"load", "store", "add", "mv", "xor", "parity", "or", "sub", "lsr"}:
                 # R type instructions with format [4:2:3] for opcode-rs-rt
                 rs = get_reg_num(operands[0], bits_avail=2, instr=instruction)
                 rt = get_reg_num(operands[1], bits_avail=3, instr=instruction)
@@ -175,7 +176,7 @@ Instruction Format
 R-type Instructions:
 
 Format: opcode (4 bits) | rs (2 bits) | rt (3 bits)
-Supported Operations: load, store, add, mv, xor, parity, or, sub
+Supported Operations: load, store, add, mv, xor, parity, or, sub, lsr
 
 I-type Instructions:
 
@@ -210,4 +211,6 @@ sub: 1100
 Notes:
 There are a maximum of 32 branch targets
 R type instructions write to r0, except for parity and mv, which write to rt
+Labels are described by name:
+Comments start with #
 '''
