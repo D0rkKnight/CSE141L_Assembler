@@ -326,37 +326,43 @@ Num_of_Errors:
     loadi r1 4         # r1 = 4
     add r0 r1          # r0 = 68
     load r3 r0         # r3 = mem[68] = p0rec xor p0
-    bne r3 One_Error   # brach to One_Errors if p0rec xor p0 != 0
+    mv r3 r0           # r0 = p0rec xor p0
+    bne One_Error      # brach to One_Errors if p0rec xor p0 != 0
 
     # elif any other parity != 0, 2 errors
     loadi r1 1
     lshift r1 6        # r1 = 64
     load r3 r1         # r3 = mem[64] = p8rec xor p8
-    bne r3 Two_Errors  # branch to Two_Errors if p8rec xor p8 != 0
+    mv r3 r0           # r0 = p8rec xor p8
+    bne Two_Errors     # branch to Two_Errors if p8rec xor p8 != 0
 
     loadi r1 1
     lshift r1 6        # r1 = 64
     loadi r2 1         # r2 = 1
     add r1 r2          # r0 = 65
     load r3 r0         # r3 = mem[65] = p4rec xor p4
-    bne r3 Two_Errors  # branch to Two_Errors if p4rec xor p4 != 0
+    mv r3 r0           # r0 = p4rec xor p4
+    bne Two_Errors     # branch to Two_Errors if p4rec xor p4 != 0
 
     loadi r1 1
     lshift r1 6        # r1 = 64
     loadi r2 2         # r2 = 2
     add r1 r2          # r0 = 66
     load r3 r0         # r3 = mem[66] = p2rec xor p2
-    bne r3 Two_Errors  # branch to Two_Errors if p2rec xor p2 != 0
+    mv r3 r0           # r0 = p2rec xor p2
+    bne Two_Errors     # branch to Two_Errors if p2rec xor p2 != 0
 
     loadi r1 1
     lshift r1 6        # r1 = 64
     loadi r2 3         # r2 = 3
     add r1 r2          # r0 = 67
     load r3 r0         # r3 = mem[67] = p1rec xor p1
-    bne r3 Two_Errors  # branch to Two_Errors if p1rec xor p1 != 0
+    mv r3 r0           # r0 = p1rec xor p1
+    bne Two_Errors     # branch to Two_Errors if p1rec xor p1 != 0
 
     # otherwise, no error
-    bne r0 No_Error    # branch to No_Error otherwise
+    loadi r0 1
+    bne No_Error    # branch to No_Error otherwise
     
 
 One_Error:
@@ -401,7 +407,8 @@ LSW_case:
     loadi r1 1
     lshift r1 6        # r1 = 64
     load r2 r1         # r2 = mem[64] = p8x
-    bne r2 MSW_case    # branch to MSW_case
+    mv r2 r0           # r0 = p8x
+    bne MSW_case       # branch to MSW_case
 
     # get output LSW
     loadi r0 1
@@ -427,7 +434,7 @@ LSW_case:
     add r0 r7          # r0 = 30 + index counter
     store r2 r0        # mem[30 + index counter] = fixed output LSW
 
-    bne r1 Recover     # branch to recover
+    bne Recover        # branch to recover
 
 MSW_case:
     lshift r3 5        # r3 = p4x,p2x,p1x_00000
@@ -457,7 +464,7 @@ MSW_case:
     add r0 r7          # r0 = 31 + index counter
     store r2 r0        # mem[31 + index counter] = fixed output MSW
 
-    bne r1 Recover     # branch to recover
+    bne Recover     # branch to recover
 
 Recover:
     # recover MSW
@@ -511,7 +518,8 @@ Recover:
     
     store r0 r7        # mem[index counter] = b8:b1
     
-    bne r1 Update_Loop
+    loadi r0 1
+    bne Update_Loop
 
 
 Two_Errors:
@@ -522,7 +530,7 @@ Two_Errors:
     add r2 r7          # r0 = 1 + index counter
     store r1 r0        # mem[1 + index counter] = 1000_0000
 
-    bne r1 Update_Loop
+    bne Update_Loop
 
 
 No_Error:
@@ -586,10 +594,13 @@ Update_Loop:
     mv r0 r6           # r6 = loop counter + 1
 
     # branch to Loop
-    sub r0 7
-    sub r0 7
-    sub r0 1           # check if loop counter = 0
-    bne r0 Loop
+    loadi r1 7
+    sub r0 r1          # r0 = loop counter - 7
+    sub r0 r1          # r0 = loop counter - 7
+
+    loadi r1 1
+    sub r0 r1           # check if loop counter = 0
+    bne Loop
 
 Halt:
     halt
