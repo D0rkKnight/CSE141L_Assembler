@@ -16,6 +16,7 @@ opcodes = {
     "or": "1011",
     "sub": "1100",
     "lsr": "1101",
+    "rsr": "1110",
 }
 
 BRANCH_TARGET_BITS = 5
@@ -67,8 +68,9 @@ def assemble(assembly_code):
             # Is a branch instruction
             if instruction[-1] == ':':
                 branch_table.append((instruction[:-1], prog_ctr))
-                
-            prog_ctr += 1
+            
+            else:
+                prog_ctr += 1
     
     if len(branch_table) > 2 ** BRANCH_TARGET_BITS:
         raise ValueError(f"Too many branch targets. Maximum number of branch targets is {2 ** BRANCH_TARGET_BITS}")
@@ -98,7 +100,7 @@ def assemble(assembly_code):
             if instruction not in opcodes:
                 raise ValueError(f"Invalid instruction {instruction}")
 
-            if instruction in {"load", "store", "add", "mv", "xor", "parity", "or", "sub", "lsr"}:
+            if instruction in {"load", "store", "add", "mv", "xor", "parity", "or", "sub", "lsr", "rsr"}:
                 # R type instructions with format [4:2:3] for opcode-rs-rt
                 rs = get_reg_num(operands[0], bits_avail=2, instr=instruction)
                 rt = get_reg_num(operands[1], bits_avail=3, instr=instruction)
