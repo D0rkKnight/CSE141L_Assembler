@@ -368,8 +368,6 @@ Num_of_Errors:
 One_Error:
     # put 4 xored parity bits in a byte
     loadi r0 1         # r0 = 1
-    loadi r0 1         # r0 = 1 //added cuz bne
-    loadi r0 1         # r0 = 1
     lshift r0 6        # r0 = 64
     load r3 r0         # r0 = mem[64] = p8xored
     lshift r3 3        # r3 = 0000_p8xored_000
