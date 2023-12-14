@@ -368,6 +368,8 @@ Num_of_Errors:
 One_Error:
     # put 4 xored parity bits in a byte
     loadi r0 1         # r0 = 1
+    loadi r0 1         # r0 = 1 //added cuz bne
+    loadi r0 1         # r0 = 1
     lshift r0 6        # r0 = 64
     load r3 r0         # r0 = mem[64] = p8xored
     lshift r3 3        # r3 = 0000_p8xored_000
@@ -420,10 +422,10 @@ LSW_case:
 
     # generate mask
     loadi r1 1         # r1 = 1
-    lsr r1 r3          # lshift r1 by r3 => r0 = mask
+    lsr r1 r3          # lshift r1 by r3 => r1 = mask
 
     # flip the wrong bit by xor mask with LSW
-    xor r0 r2          # r0 = fixed output LSW
+    xor r1 r2          # r0 = fixed output LSW
     mv r0 r2           # r2 = fixed output LSW
 
     # store it back
@@ -450,10 +452,10 @@ MSW_case:
 
     # generate mask
     loadi r1 1         # r1 = 1
-    lsr r1 r3          # lshift r1 by r3 => r0 = mask
+    lsr r1 r3          # lshift r1 by r3 => r1 = mask
 
     # flip the wrong bit by xor mask with MSW
-    xor r0 r2          # r0 = fixed output MSW
+    xor r1 r2          # r0 = fixed output MSW
     mv r0 r2           # r2 = fixed output MSW
 
     # store it back
@@ -545,7 +547,7 @@ No_Error:
 
     loadi r1 1         # r1 = 1
     add r1 r7          # r0 = 1 + index counter
-    store r3 r0        # mem[1 + index counter] = 00000_b11:b9
+    store r2 r0        # mem[1 + index counter] = 00000_b11:b9
 
     # recover LSW
     loadi r1 1         # r1 = 1
@@ -555,7 +557,7 @@ No_Error:
     add r0 r7          # r0 = 31 + index counter
     load r2 r0         # r2 = mem[31 + index counter] = b11:b5,p8
     rshift r2 1        # r2 = 0_b11:b5
-    lshift r2 5        # r2 = b8:b5_0000
+    lshift r2 4        # r2 = b8:b5_0000
     mv r2 r3           # r3 = b8:b5_0000
 
     loadi r0 1

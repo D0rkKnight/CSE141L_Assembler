@@ -98,7 +98,7 @@ initial begin
 	  $display("expected 1???????????????, got %b",{DUT.dm1.core[1+2*i],DUT.dm1.core[0+2*i]});
     end :dbl_err
     case2++;
-	$display("flip positions = %b %b",flip2[i],flip[i]);
+	$display("flip positions = %d %d",flip2[i],flip[i]);
 	$display();
   end
 
