@@ -62,6 +62,8 @@ BitLoop:
     # r1 = r1 | r2
     or r1 r2
     mv r0 r1
+    rshift r1 3 # Trim to 5 bits
+    lshift r1 3
 
     # Now we have the subbit.
 
