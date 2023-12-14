@@ -81,9 +81,9 @@ Loop:                  # recalculate parity bits and xor each with original ones
     lshift r2 6        # r2 = b11,b10_000000
 
     load r3 r0         # r3 = mem[31 + index counter] = b11:b5,p8
-    rshift r3 4        # r3 = b7:b5,p8_0000
-    lshift r3 6        # r3 = 000000_b7,b6
-    rshift r3 4        # r3 = 00_b7,b6_0000
+    lshift r3 4        # r3 = b7:b5,p8_0000
+    rshift r3 6        # r3 = 000000_b7,b6
+    lshift r3 4        # r3 = 00_b7,b6_0000
     or r2 r3           # r0 = b11,b10,b7,b6_0000
     mv r0 r3           # r3 = b11,b10,b7,b6_0000
 
@@ -351,7 +351,6 @@ One_Error:
     loadi r1 3         # r1 = 3
     add r0 r1          # r0 = 67
     load r2 r0         # r2 = mem[67] = p1xored
-    lshift r2 2        # r2 = 0000000_p1xored
 
     or r2 r3           # r0 = 0000_p8x,p4x,p2x,p1x
     mv r0 r3           # r3 = 0000_p8x,p4x,p2x,p1x
