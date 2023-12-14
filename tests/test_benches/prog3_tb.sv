@@ -22,7 +22,8 @@ top_level DUT(.clk(clk), .reset(req), .req(req), .done(done));               // 
 initial begin
 // program 3
 // pattern we are looking for; experiment w/ various values
-  pat = 5'b0000;//5'b10101;//$random;//5'b11111;
+  // pat = 5'b0000;//5'b10101;//$random;//5'b11111;
+  pat = $random;
   str2 = 0;
   DUT.dm1.core[32] = {pat,3'b0};
   for(int i=0; i<32; i++) begin

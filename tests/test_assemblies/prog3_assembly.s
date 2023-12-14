@@ -47,16 +47,13 @@ BitLoop:
     # r2 = mem[r2]
     load r2 r2
 
-    # r2 = r2 << (8-r5)
+    # r2 = r2 >> (8-r5)
     loadi r3 1
     lshift r3 3
 
     sub r3 r5
     mv r0 r3
 
-    lsr r2 r3
-
-    # r2 = r2 >> (8-r5)
     rsr r2 r3
 
     # r1 = r1 | r2
@@ -73,32 +70,32 @@ BitLoop:
 
     # Check if subbit is in the middle of a byte.
     # r5 = 0,1,2,or 3
-    loadi r1 0
-    sub r1 r5
+    loadi r0 0
+    sub r0 r5
     bne Not0
 
     loadi r0 1
     bne InByteMatch
 
 Not0:
-    loadi r1 1
-    sub r1 r5
+    loadi r0 1
+    sub r0 r5
     bne Not1
 
     loadi r0 1
     bne InByteMatch
 
 Not1:
-    loadi r1 2
-    sub r1 r5
+    loadi r0 2
+    sub r0 r5
     bne Not2
 
     loadi r0 1
     bne InByteMatch
 
 Not2:
-    loadi r1 3
-    sub r1 r5
+    loadi r0 3
+    sub r0 r5
     bne NoInByteMatch
 
     loadi r0 1
@@ -135,8 +132,8 @@ InByteMatch:
     add r3 r0
     store r0 r2
 
-    loadi r1 1
-    mv r1 r4
+    loadi r0 1
+    mv r0 r4
     
 NoOncePerByteMatch:
 NoInByteMatch:
