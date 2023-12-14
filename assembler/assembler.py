@@ -86,60 +86,67 @@ def assemble(assembly_code):
     
     for line in assembly_code.split("\n"):
         tokens = line.split()
-        if tokens:
-            instruction = tokens[0].lower()
-            operands = tokens[1:]
-            
-            if instruction == '#':
-                continue
-            
-            # Is a branch instruction
-            if instruction[-1] == ':':
-                continue
-            
-            if instruction not in opcodes:
-                raise ValueError(f"Invalid instruction {instruction}")
+        
+        try:
+            if tokens:
+                instruction = tokens[0].lower()
+                operands = tokens[1:]
+                
+                if instruction == '#':
+                    continue
+                
+                # Is a branch instruction
+                if instruction[-1] == ':':
+                    continue
+                
+                if instruction not in opcodes:
+                    raise ValueError(f"Invalid instruction {instruction}")
 
-            if instruction in {"load", "store", "add", "mv", "xor", "parity", "or", "sub", "lsr", "rsr"}:
-                # R type instructions with format [4:2:3] for opcode-rs-rt
-                rs = get_reg_num(operands[0], bits_avail=2, instr=instruction)
-                rt = get_reg_num(operands[1], bits_avail=3, instr=instruction)
-                machine_code.append(f"{opcodes[instruction]}{rs}{rt}")
-            elif instruction in {"lshift", "rshift"}:
-                # I type instructions with format [4:2:3] for opcode-rs-i
-                rs = get_reg_num(operands[0], bits_avail=2, instr=instruction)
-                imm = parse_imm(int(operands[1]), bits=3)
-                machine_code.append(f"{opcodes[instruction]}{rs}{imm}")
-            elif instruction == "loadi":
-                # I type instruction with a 4-bit immediate value
-                rs = get_reg_num(operands[0], bits_avail=2, instr=instruction)
-                imm = parse_imm(int(operands[1]), bits=3)
-                machine_code.append(f"{opcodes[instruction]}{rs}{imm}")
-            elif instruction in {"bne"}:
-                # I type instruction with a 6-bit immediate value
-                rs = 0
-                
-                branch_target = operands[0]
-                branch_target_exists = False
-                branch_target_index = None
-                i = 0
-                for label, target in branch_table:
-                    if label == branch_target.lower():
-                        branch_target_exists = True
-                        branch_target_index = i
-                        break
-                    i += 1
-                if not branch_target_exists:
-                    raise ValueError(f"Branch target {branch_target} does not exist")
-                
-                
-                
-                print(f"rs: {rs}")
-                print(f"Branch target {branch_target} found at index {branch_target_index}")
-                
-                machine_code.append(f"{opcodes[instruction]}{branch_target_index:05b}")
-            elif instruction == "halt":
-                machine_code.append(f"{opcodes[instruction]}00000")
+                if instruction in {"load", "store", "add", "mv", "xor", "parity", "or", "sub", "lsr", "rsr"}:
+                    # R type instructions with format [4:2:3] for opcode-rs-rt
+                    rs = get_reg_num(operands[0], bits_avail=2, instr=instruction)
+                    rt = get_reg_num(operands[1], bits_avail=3, instr=instruction)
+                    machine_code.append(f"{opcodes[instruction]}{rs}{rt}")
+                elif instruction in {"lshift", "rshift"}:
+                    # I type instructions with format [4:2:3] for opcode-rs-i
+                    rs = get_reg_num(operands[0], bits_avail=2, instr=instruction)
+                    imm = parse_imm(int(operands[1]), bits=3)
+                    machine_code.append(f"{opcodes[instruction]}{rs}{imm}")
+                elif instruction == "loadi":
+                    # I type instruction with a 4-bit immediate value
+                    rs = get_reg_num(operands[0], bits_avail=2, instr=instruction)
+                    imm = parse_imm(int(operands[1]), bits=3)
+                    machine_code.append(f"{opcodes[instruction]}{rs}{imm}")
+                elif instruction in {"bne"}:
+                    # I type instruction with a 6-bit immediate value
+                    rs = 0
+                    
+                    branch_target = operands[0]
+                    branch_target_exists = False
+                    branch_target_index = None
+                    i = 0
+                    for label, target in branch_table:
+                        if label == branch_target.lower():
+                            branch_target_exists = True
+                            branch_target_index = i
+                            break
+                        i += 1
+                    if not branch_target_exists:
+                        raise ValueError(f"Branch target {branch_target.lower()} does not exist")
+                    
+                    
+                    
+                    print(f"rs: {rs}")
+                    print(f"Branch target {branch_target} found at index {branch_target_index}")
+                    
+                    machine_code.append(f"{opcodes[instruction]}{branch_target_index:05b}")
+                elif instruction == "halt":
+                    machine_code.append(f"{opcodes[instruction]}00000")
+        except Exception as e:
+            print(f"Error: {e}")
+            print(f"Error occurred at line: {line}")
+            print(f"Branch table: {branch_table}")
+            sys.exit(1)
     
     # Check if the last instruction is a halt instruction
     if machine_code[-1][0:4] != "1010":
