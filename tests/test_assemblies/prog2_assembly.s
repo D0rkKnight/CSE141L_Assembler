@@ -230,15 +230,14 @@ Loop:                  # recalculate parity bits and xor each with original ones
     add r0 r1          # r0 = 67
     store r3 r0        # mem[67] = p1rec xor p1
 
-    # recalculate p0 = ^(b11:1,p8rec,p4rec,p2rec,p1rec)
+    # recalculate p0 = ^(b11:1,p8,p4,p2,p1)
     loadi r1 1         # r1 = 1
     lshift r1 5        # r1 = 32
     loadi r2 1         # r2 = 1
     sub r1 r2          # r0 = 32-1 = 31
     add r0 r7          # r0 = 31 + index counter
     load r2 r0         # r2 = mem[31 + index counter] = b11:b5,p8
-    rshift r2 1        # r2 = 0_b11:b5
-    parity r2 r3       # r3 = ^(b11:b5)
+    parity r2 r3       # r3 = ^(b11:b5,p8)
 
     loadi r0 1
     lshift r0 5        # r0 = 32
@@ -246,57 +245,11 @@ Loop:                  # recalculate parity bits and xor each with original ones
     sub r0 r1          # r0 = 30-2 = 30
     add r0 r7          # r0 = 30 + index counter
     load r2 r0         # r2 = mem[30 + index counter] = b4:b2,p4,b1,p2,p1,p0
-    rshift r2 5        # r2 = 00000_b4:b2
-    parity r2 r1       # r1 = ^(b4:b2)
+    rshift r2 1        # r2 = 0_b4:b2,p4,b1,p2,p1
+    parity r2 r1       # r1 = ^(b4:b2,p4,b1,p2,p1)
 
-    xor r1 r3          # r0 = ^(b11:b2)
-    mv r0 r3           # r3 = ^(b11:b2)
-
-    loadi r0 1
-    lshift r0 5        # r0 = 32
-    loadi r1 2         # r1 = 2
-    sub r0 r1          # r0 = 30-2 = 30
-    add r0 r7          # r0 = 30 + index counter
-    load r2 r0         # r2 = mem[30 + index counter] = b4:b2,p4,b1,p2,p1,p0
-    lshift r2 4        # r2 = b1,p2,p1,p0_0000
-    rshift r2 7        # r2 = 0000000_b1
-
-    xor r2 r3          # r0 = ^(b11:b1)
-    mv r0 r3           # r3 = ^(b11:b1)
-
-    loadi r1 1
-    lshift r1 6        # r1 = 64
-    load r2 r1         # r2 = p8rec
-
-    xor r2 r3          # r0 = ^(b11:b1,p8rec)
-    mv r0 r3           # r3 = ^(b11:b1,p8rec)
-
-    loadi r0 1
-    lshift r0 6        # r0 = 64
-    loadi r1 1         # r1 = 1
-    add r0 r1          # r0 = 65
-    load r2 r0         # r2 = mem[65] = p4rec
-
-    xor r2 r3          # r0 = ^(b11:b1,p8rec,p4rec)
-    mv r0 r3           # r3 = ^(b11:b1,p8rec,p4rec)
-
-    loadi r0 1
-    lshift r0 6        # r0 = 64
-    loadi r1 2         # r1 = 2
-    add r0 r1          # r0 = 66
-    load r2 r0         # r2 = mem[66] = p2rec
-
-    xor r2 r3          # r0 = ^(b11:b1,p8rec,p4rec,p2rec)
-    mv r0 r3           # r3 = ^(b11:b1,p8rec,p4rec,p2rec)
-
-    loadi r0 1
-    lshift r0 6        # r0 = 64
-    loadi r1 3         # r1 = 3
-    add r0 r1          # r0 = 67
-    load r2 r0         # r2 = mem[67] = p1rec
-
-    xor r2 r3          # r0 = ^(b11:b1,p8rec,p4rec,p2rec,p1rec) = p0rec
-    mv r0 r3           # r3 = p0rec
+    xor r1 r3          # r0 = ^(b11:b1,p8,p4,p2,p1)
+    mv r0 r3           # r3 = ^(b11:b1,p8,p4,p2,p1) = p0rec
 
     # get input p0
     loadi r0 1
