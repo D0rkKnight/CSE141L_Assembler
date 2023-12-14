@@ -20,6 +20,7 @@ opcodes = {
 }
 
 BRANCH_TARGET_BITS = 5
+COMMENTS = ["#", "//", "@"]
 
  
 # Expects rn to be a string of the form "r0", "r1", ..., "r7"
@@ -62,7 +63,7 @@ def assemble(assembly_code):
             instruction = tokens[0].lower()
             operands = tokens[1:]
             
-            if instruction == '#':
+            if instruction in COMMENTS:
                 continue
             
             # Is a branch instruction
@@ -92,7 +93,7 @@ def assemble(assembly_code):
                 instruction = tokens[0].lower()
                 operands = tokens[1:]
                 
-                if instruction == '#':
+                if instruction in COMMENTS:
                     continue
                 
                 # Is a branch instruction

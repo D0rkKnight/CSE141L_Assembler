@@ -65,10 +65,10 @@ module top_level(
     .MemtoReg,
     .ALUOp(alu_cmd),
     .Halt,
-    .RegDst);
+    .RegDst,
+    .rd_addrA,
+    .rd_addrB);
 
-  assign rd_addrA = mach_code[2:0];
-  assign rd_addrB = mach_code[4:3];
   assign branch_tag = mach_code[4:0];
   // assign immed = {{5{mach_code[2]}}, mach_code[2:0]}; // Sign extended immediate value (Right 3 bits)
   assign immed = mach_code[2:0]; // Don't sign extend immediate value (Right 3 bits)

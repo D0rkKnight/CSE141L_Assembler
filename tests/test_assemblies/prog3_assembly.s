@@ -67,47 +67,58 @@ BitLoop:
 
     # Check if subbit is in the middle of a byte.
     # r5 = 0,1,2,or 3
-    loadi r1 0
-    sub r1 r5
-    bne Not0
+    @ loadi r1 0
+    @ sub r1 r5
+    @ bne Not0
 
-    loadi r0 1
-    bne InByteMatch
+    @ loadi r0 1
+    @ bne InByteMatch
 
 Not0:
-    loadi r1 1
-    sub r1 r5
-    bne Not1
+    @ loadi r1 1
+    @ sub r1 r5
+    @ bne Not1
 
-    loadi r0 1
-    bne InByteMatch
+    @ loadi r0 1
+    @ bne InByteMatch
 
-Not1:
-    loadi r1 2
-    sub r1 r5
-    bne Not2
+@ Not1:
+@     loadi r1 2
+@     sub r1 r5
+@     bne Not2
 
-    loadi r0 1
-    bne InByteMatch
+@     loadi r0 1
+@     bne InByteMatch
 
-Not2:
-    loadi r1 3
-    sub r1 r5
-    bne Not3
+@ Not2:
+@     loadi r1 3
+@     sub r1 r5
+@     bne Not3
 
-    loadi r0 1
-    bne InByteMatch
+@     loadi r0 1
+@     bne InByteMatch
 
-Not3:
-    loadi r1 4
-    sub r1 r5
-    bne NoInByteMatch
+@ Not3:
+@     loadi r1 4
+@     sub r1 r5
+@     bne NoInByteMatch
 
-    loadi r0 1
-    bne InByteMatch
+@     loadi r0 1
+@     bne InByteMatch
 
 InByteMatch:
+    
+    # Log in byte match, mem[33] += 1
+    @ loadi r2 1
+    @ lshift r2 5
+    @ loadi r3 1
+    @ add r2 r3
+    @ mv r0 r2 // r2=33
 
+    @ load r3 r2
+    @ loadi r0 1
+    @ add r3 r0
+    @ store r0 r2
 
 NoInByteMatch:
 

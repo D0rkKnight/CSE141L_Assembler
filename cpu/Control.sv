@@ -4,7 +4,8 @@ module Control #(parameter opwidth = 3, mcodebits = 9)(
   output logic Branch, 
      MemtoReg, MemWrite, ALUSrc, RegWrite, Halt,
   output logic[opwidth:0] ALUOp,	   // for up to 8 ALU operations
-  output logic[1:0] RegDst);      // destination register address
+  output logic[1:0] RegDst,
+  output logic[2:0] rd_addrA, rd_addrB);      // destination register address
 
 always_comb begin
 // defaults
@@ -15,6 +16,10 @@ always_comb begin
   RegWrite  =	'b1;   // 0: for store or no op  1: most other operations 
   MemtoReg  =	'b0;   // 1: load -- route memory instead of ALU to reg_file data in
   ALUOp	    =   'b0111; // y = a+0; nop
+
+  rd_addrA = instr[2:0];
+  rd_addrB = instr[4:3];
+
 // sample values only -- use what you need
 case(instr[8:5])    // override defaults with exceptions
   4'b0000:  //load
@@ -36,6 +41,7 @@ case(instr[8:5])    // override defaults with exceptions
       ALUOp = 'b0010;
       Branch = 'b1;
       RegWrite = 'b0;
+      rd_addrB = 3'b0;
     end 
   4'b0100:  //add
     begin
