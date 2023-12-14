@@ -38,9 +38,9 @@ Loop:                  # recalculate parity bits and xor each with original ones
     add r0 r7          # r0 = 31 + index counter
     load r2 r0         # r2 = mem[31 + index counter] = b11:b5,p8
     rshift r2 4        # r2 = 0000_b11:b8
-    rshift r2 4        # r2 = b11:b8_0000
+    lshift r2 4        # r2 = b11:b8_0000
 
-    loadi r1 2         # r1 = 2
+    loadi r1 1         # r1 = 2
     sub r0 r1          # r0 = 30 + index counter
     load r3 r0         # r3 = mem[30 + index counter] = b4:b2,p4,b1,p2,p1,p0
     rshift r3 5        # r3 = 00000_b4:b2
@@ -466,63 +466,9 @@ MSW_case:
 
     bne Recover     # branch to recover
 
-Recover:
-    # recover MSW
-    loadi r1 1         # r1 = 1
-    lshift r1 5        # r1 = 32
-    loadi r2 1         # r2 = 1
-    sub r1 r2          # r0 = 32-1 = 31
-    add r0 r7          # r0 = 31 + index counter
-    load r2 r0         # r2 = mem[31 + index counter] = b11:b5,p8
-    rshift r2 5        # r2 = 00000_b11:b9
-    loadi r1 1         # r1 = 1
-    lshift r1 6        # r1 = 0100_0000
-    or r1 r2           # r0 = 01000_b11:b9
-    mv r0 r3           # r3 = 01000_b11:b9
-
-    loadi r1 1         # r1 = 1
-    add r1 r7          # r0 = 1 + index counter
-    store r3 r0        # mem[1 + index counter] = 01000_b11:b9
-
-    # recover LSW
-    loadi r1 1         # r1 = 1
-    lshift r1 5        # r1 = 32
-    loadi r2 1         # r2 = 1
-    sub r1 r2          # r0 = 32-1 = 31
-    add r0 r7          # r0 = 31 + index counter
-    load r2 r0         # r2 = mem[31 + index counter] = b11:b5,p8
-    rshift r2 1        # r2 = 0_b11:b5
-    lshift r2 5        # r2 = b8:b5_0000
-    mv r2 r3           # r3 = b8:b5_0000
-
-    loadi r0 1
-    lshift r0 5        # r0 = 32
-    loadi r1 2         # r1 = 2
-    sub r0 r1          # r0 = 30-2 = 30
-    add r0 r7          # r0 = 30 + index counter
-    load r2 r0         # r2 = mem[30 + index counter] = b4:b2,p4,b1,p2,p1,p0
-    rshift r2 5        # r2 = 00000_b4:b2
-    lshift r2 1        # r2 = 0000_b4:b2_0
-    or r2 r3           # r0 = b8:b2_0
-    mv r0 r3           # r3 = b8:b2_0
-
-    loadi r0 1
-    lshift r0 5        # r0 = 32
-    loadi r1 2         # r1 = 2
-    sub r0 r1          # r0 = 30-2 = 30
-    add r0 r7          # r0 = 30 + index counter
-    load r2 r0         # r2 = mem[30 + index counter] = b4:b2,p4,b1,p2,p1,p0
-    lshift r2 4        # r2 = b1,p2,p1,p0_0000
-    rshift r2 7        # r2 = 0000000_b1
-    or r2 r3           # r0 = b8:b1
-    
-    store r0 r7        # mem[index counter] = b8:b1
-    
-    loadi r0 1
-    bne Update_Loop
-
 
 Two_Errors:
+    
     loadi r1 1         # r1 = 1
     lshift r1 7        # r1 = 1000_0000
     store r1 r7        # mem[index counter] = 1000_0000
@@ -581,6 +527,65 @@ No_Error:
     
     store r0 r7        # mem[index counter] = b8:b1
 
+    loadi r0 1
+    bne Update_Loop
+
+
+Recover:
+    # recover MSW
+    loadi r1 1         # r1 = 1
+    lshift r1 5        # r1 = 32
+    loadi r2 1         # r2 = 1
+    sub r1 r2          # r0 = 32-1 = 31
+    add r0 r7          # r0 = 31 + index counter
+    load r2 r0         # r2 = mem[31 + index counter] = b11:b5,p8
+    rshift r2 5        # r2 = 00000_b11:b9
+    loadi r1 1         # r1 = 1
+    lshift r1 6        # r1 = 0100_0000
+    or r1 r2           # r0 = 01000_b11:b9
+    mv r0 r3           # r3 = 01000_b11:b9
+
+    loadi r1 1         # r1 = 1
+    add r1 r7          # r0 = 1 + index counter
+    store r3 r0        # mem[1 + index counter] = 01000_b11:b9
+
+    # recover LSW
+    loadi r1 1         # r1 = 1
+    lshift r1 5        # r1 = 32
+    loadi r2 1         # r2 = 1
+    sub r1 r2          # r0 = 32-1 = 31
+    add r0 r7          # r0 = 31 + index counter
+    load r2 r0         # r2 = mem[31 + index counter] = b11:b5,p8
+    rshift r2 1        # r2 = 0_b11:b5
+    lshift r2 5        # r2 = b8:b5_0000
+    mv r2 r3           # r3 = b8:b5_0000
+
+    loadi r0 1
+    lshift r0 5        # r0 = 32
+    loadi r1 2         # r1 = 2
+    sub r0 r1          # r0 = 30-2 = 30
+    add r0 r7          # r0 = 30 + index counter
+    load r2 r0         # r2 = mem[30 + index counter] = b4:b2,p4,b1,p2,p1,p0
+    rshift r2 5        # r2 = 00000_b4:b2
+    lshift r2 1        # r2 = 0000_b4:b2_0
+    or r2 r3           # r0 = b8:b2_0
+    mv r0 r3           # r3 = b8:b2_0
+
+    loadi r0 1
+    lshift r0 5        # r0 = 32
+    loadi r1 2         # r1 = 2
+    sub r0 r1          # r0 = 30-2 = 30
+    add r0 r7          # r0 = 30 + index counter
+    load r2 r0         # r2 = mem[30 + index counter] = b4:b2,p4,b1,p2,p1,p0
+    lshift r2 4        # r2 = b1,p2,p1,p0_0000
+    rshift r2 7        # r2 = 0000000_b1
+    or r2 r3           # r0 = b8:b1
+    
+    store r0 r7        # mem[index counter] = b8:b1
+    
+    loadi r0 1
+    bne Update_Loop
+
 
 Update_Loop:
     # update index counter
@@ -600,7 +605,7 @@ Update_Loop:
 
     loadi r1 1
     sub r0 r1           # check if loop counter = 0
-    bne Loop
+    # bne Loop
 
 Halt:
     halt
